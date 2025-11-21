@@ -1,0 +1,209 @@
+{
+  "auth": {
+    "register": {
+      "title": "Create an account",
+      "email": "Email",
+      "password": "Password",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "username": "Username",
+      "dateOfBirth": "Date of birth",
+      "country": "Country",
+      "submit": "Sign up",
+      "alreadyHaveAccount": "Already have an account?",
+      "login": "Sign in",
+      "passwordRequirements": "Password must contain at least 8 characters, one uppercase, one lowercase, one number and one special character",
+      "emailSent": "Verification email sent!",
+      "checkEmail": "Check your email to activate your account"
+    },
+    "login": {
+      "title": "Sign in",
+      "email": "Email",
+      "password": "Password",
+      "twoFactorCode": "2FA code",
+      "submit": "Sign in",
+      "forgotPassword": "Forgot password?",
+      "noAccount": "Don't have an account?",
+      "register": "Sign up",
+      "accountLocked": "Account locked. Try again in {minutes} minutes.",
+      "tooManyAttempts": "Too many attempts. Please try again later.",
+      "invalidCredentials": "Invalid credentials",
+      "emailNotVerified": "Email not verified. Please check your email."
+    },
+    "verifyEmail": {
+      "title": "Email verification",
+      "success": "Email verified successfully!",
+      "error": "Invalid or expired link",
+      "redirecting": "Redirecting..."
+    },
+    "forgotPassword": {
+      "title": "Forgot password",
+      "email": "Email",
+      "submit": "Send reset link",
+      "success": "If an account exists, an email has been sent",
+      "backToLogin": "Back to sign in"
+    },
+    "resetPassword": {
+      "title": "Reset password",
+      "token": "Token",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password",
+      "submit": "Reset",
+      "success": "Password reset successfully!",
+      "error": "Invalid or expired token",
+      "passwordsNotMatch": "Passwords do not match"
+    },
+    "twoFactor": {
+      "enable": "Enable 2FA",
+      "disable": "Disable 2FA",
+      "method": "Method",
+      "app": "App (TOTP)",
+      "email": "Email",
+      "recommended": "Recommended",
+      "qrCode": "Scan this QR code with your authenticator app",
+      "code": "Verification code",
+      "verify": "Verify",
+      "enabled": "2FA enabled",
+      "disabled": "2FA disabled",
+      "codeSent": "Code sent by email",
+      "enterCode": "Enter the received code"
+    },
+    "oauth": {
+      "uaePass": "Continue with UAE Pass",
+      "google": "Continue with Google",
+      "facebook": "Continue with Facebook",
+      "apple": "Continue with Apple"
+    },
+    "emailPlaceholder": "yo@gmail.com",
+    "otpCodePlaceholder": "000000",
+    "otpCode": "OTP code",
+    "oneTimePassword": "OTP Code",
+    "invalidOTP": "Invalid OTP code",
+    "otpSent": "A code has been sent to your email address",
+    "verifying": "Verifying...",
+    "sending": "Sending...",
+    "retry": "Retry",
+    "success": "Login successful!",
+    "redirecting": "Redirecting...",
+    "comingSoon": "Coming soon",
+    "copyright": "reccos.ae © 2025",
+    "error": "An error occurred",
+    "welcome": "Welcome",
+    "email": "Email",
+    "username": "Username",
+    "role": "Role",
+    "emailVerified": "Email verified",
+    "accountActive": "Account active",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "navbar": {
+    "ariaLabel": "Primary navigation",
+    "links": {
+      "home": "Home",
+      "properties": "Launchpad",
+      "marketplace": "Exchange",
+      "login": "Log in",
+      "signup": "Sign Up",
+      "dashboard": "Wallet",
+      "logout": "Logout"
+    }
+  },
+  "home": {
+    "subtitle": "Dubai Real Estate Agency • RERA-licensed",
+    "title": {
+      "line1": "Find, Buy, Sell & Invest",
+      "line2": "in Dubai Property",
+      "line3": "— With Confidence"
+    },
+    "button": {
+      "discover": "DISCOVER",
+      "talkToAdvisor": "Talk to an Advisor"
+    },
+    "features": {
+      "readMore": "Read more",
+      "readLess": "Read less",
+      "reccos": {
+        "name": "RECCOS — Simple access to real estate ownership",
+        "desc": "RECCOS allows anyone to invest in Dubai's booming real estate market from as little as AED 2,000 by buying real, registered property fractions. You become a co-owner of a tangible asset with full transparency and traceability of your share."
+      },
+      "ownership": {
+        "name": "Real and certified ownership",
+        "desc": "Every RECCOS property is officially registered in Dubai. When you invest, you receive a title deed and an ownership certificate corresponding to your contribution. You don't hold a digital promise — you hold a legal, verifiable proof of ownership."
+      },
+      "marketplace": {
+        "name": "An open and liquid marketplace",
+        "desc": "The RECCOS Marketplace lets you buy or resell your shares freely, depending on your goals. You can exit whenever you wish, without waiting for the global sale of the property, and take advantage of real-time market appreciation."
+      },
+      "noor": {
+        "name": "Noor — your intelligent personal assistant",
+        "desc": "Noor is your dedicated AI assistant. She searches for properties that match your goals, automates recurring investments, and can act on your behalf when the right opportunity appears. If you authorize monthly investments, Noor finds the best balance between potential and stability, managing your capital with precision and transparency."
+      },
+      "whyDubai": {
+        "name": "Why Dubai ?",
+        "desc": "Dubai's real estate market continues to break records: 2024: AED 761 billion in transactions (+27 % YoY). H1 2025: AED 431 billion in deals (+26 % in volume). Over 90,000 active investors yearly. A stable, global hub offering growth, liquidity, and international accessibility — the ideal environment for fractional ownership."
+      },
+      "howItWorks": {
+        "name": "How it works ?",
+        "desc": "Choose a property — or let Noor find one for you. Invest any amount from AED 2,000 upward. Track your ownership and market updates in real time. Resell your shares anytime through the RECCOS Marketplace. A seamless digital experience, with no complex paperwork."
+      },
+      "security": {
+        "name": "Security, transparency, and peace of mind",
+        "desc": "Every property is legally registered, and all documents are verifiable and accessible. RECCOS ensures total transparency of ownership, transactions, and records. Your assets are protected, your ownership is documented, and your peace of mind is our priority."
+      }
+    },
+    "scrollAnimation": {
+      "title": "We shape",
+      "lines": {
+        "line1": "spaces into opportunities",
+        "line2": "data into insight",
+        "line3": "confidence into action",
+        "line4": "action into ownership",
+        "line5": "ownership into community",
+        "line6": "the future of real estate"
+      }
+    },
+    "searchForm": {
+      "title": "Real estate finally accessible",
+      "price": "Real estate excellence reimagined",
+      "propertyTypeLabel": "Type",
+      "propertyTypePlaceholder": "Any type",
+      "emirateLabel": "Emirate",
+      "emiratePlaceholder": "Select Emirate",
+      "budgetLabel": "Budget",
+      "budgetPlaceholder": "Amount (AED)",
+      "searchButton": "LET'S GO!"
+    },
+    "featuredLaunch": {
+      "badge": "Limited release",
+      "title": "Emerald Dunes | Palm West",
+      "description": "A levitating penthouse with 1,800 m² of terraces, a suspended mirror pool, and a 270° panoramic suite. Private access to the RECCOS Sky Club and 24/7 Gulfstream concierge.",
+      "attributes": [
+        { "label": "Floor area", "value": "35,000 sq ft" },
+        { "label": "Skyline height", "value": "212 m" },
+        { "label": "Ultra-rare lots", "value": "3" }
+      ],
+      "notificationTitle": "Get notified for the drop",
+      "notificationSubtitle": "Secure your priority pass to the private launch.",
+      "notifyCta": "schedule alert",
+      "countdownLegend": "Next launch",
+      "countdownLabels": {
+        "days": "Days",
+        "hours": "Hours",
+        "minutes": "Minutes",
+        "seconds": "Seconds"
+      }
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back"
+  }
+}
+

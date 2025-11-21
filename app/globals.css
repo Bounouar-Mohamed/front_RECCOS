@@ -1,0 +1,39 @@
+@layer reset, base, tokens, recipes, utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: black;
+}
+
+#__next {
+  height: 100%;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Masquer le contenu de l'app jusqu'à ce que le preloader soit géré */
+body:not([data-preloader-ready]) #app-content {
+  visibility: hidden;
+  opacity: 0;
+}
+
+body[data-preloader-ready] #app-content {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}

@@ -1,0 +1,209 @@
+{
+  "auth": {
+    "register": {
+      "title": "Créer un compte",
+      "email": "Email",
+      "password": "Mot de passe",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "username": "Nom d'utilisateur",
+      "dateOfBirth": "Date de naissance",
+      "country": "Pays",
+      "submit": "S'inscrire",
+      "alreadyHaveAccount": "Déjà un compte ?",
+      "login": "Se connecter",
+      "passwordRequirements": "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial",
+      "emailSent": "Email de vérification envoyé !",
+      "checkEmail": "Vérifiez votre boîte email pour activer votre compte"
+    },
+    "login": {
+      "title": "Connexion",
+      "email": "Email",
+      "password": "Mot de passe",
+      "twoFactorCode": "Code 2FA",
+      "submit": "Se connecter",
+      "forgotPassword": "Mot de passe oublié ?",
+      "noAccount": "Pas encore de compte ?",
+      "register": "S'inscrire",
+      "accountLocked": "Compte verrouillé. Réessayez dans {minutes} minutes.",
+      "tooManyAttempts": "Trop de tentatives. Réessayez plus tard.",
+      "invalidCredentials": "Identifiants invalides",
+      "emailNotVerified": "Email non vérifié. Vérifiez votre boîte email."
+    },
+    "verifyEmail": {
+      "title": "Vérification de l'email",
+      "success": "Email vérifié avec succès !",
+      "error": "Lien invalide ou expiré",
+      "redirecting": "Redirection..."
+    },
+    "forgotPassword": {
+      "title": "Mot de passe oublié",
+      "email": "Email",
+      "submit": "Envoyer le lien de réinitialisation",
+      "success": "Si un compte existe, un email a été envoyé",
+      "backToLogin": "Retour à la connexion"
+    },
+    "resetPassword": {
+      "title": "Réinitialiser le mot de passe",
+      "token": "Token",
+      "newPassword": "Nouveau mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "submit": "Réinitialiser",
+      "success": "Mot de passe réinitialisé avec succès !",
+      "error": "Token invalide ou expiré",
+      "passwordsNotMatch": "Les mots de passe ne correspondent pas"
+    },
+    "twoFactor": {
+      "enable": "Activer la 2FA",
+      "disable": "Désactiver la 2FA",
+      "method": "Méthode",
+      "app": "Application (TOTP)",
+      "email": "Email",
+      "recommended": "Recommandé",
+      "qrCode": "Scannez ce QR code avec votre application d'authentification",
+      "code": "Code de vérification",
+      "verify": "Vérifier",
+      "enabled": "2FA activée",
+      "disabled": "2FA désactivée",
+      "codeSent": "Code envoyé par email",
+      "enterCode": "Entrez le code reçu"
+    },
+    "oauth": {
+      "uaePass": "Continuer avec UAE Pass",
+      "google": "Continuer avec Google",
+      "facebook": "Continuer avec Facebook",
+      "apple": "Continuer avec Apple"
+    },
+    "emailPlaceholder": "yo@gmail.com",
+    "otpCodePlaceholder": "000000",
+    "otpCode": "Code OTP",
+    "oneTimePassword": "Code OTP",
+    "invalidOTP": "Code OTP invalide",
+    "otpSent": "Un code a été envoyé à votre adresse email",
+    "verifying": "Vérification...",
+    "sending": "Envoi en cours...",
+    "retry": "Réessayer",
+    "success": "Connexion réussie !",
+    "redirecting": "Redirection en cours...",
+    "comingSoon": "Bientôt disponible",
+    "copyright": "reccos.ae © 2025",
+    "error": "Une erreur est survenue",
+    "welcome": "Bienvenue",
+    "email": "Email",
+    "username": "Nom d'utilisateur",
+    "role": "Rôle",
+    "emailVerified": "Email vérifié",
+    "accountActive": "Compte actif",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "navbar": {
+    "ariaLabel": "Navigation principale",
+    "links": {
+      "home": "Accueil",
+      "properties": "Launchpad",
+      "marketplace": "Exchange",
+      "login": "Connexion",
+      "signup": "Inscription",
+      "dashboard": "Portefeuille",
+      "logout": "Déconnexion"
+    }
+  },
+  "home": {
+    "subtitle": "Agence Immobilière de Dubaï • Licence RERA",
+    "title": {
+      "line1": "Trouvez, Achetez, Vendez & Investissez",
+      "line2": "dans l'Immobilier de Dubaï",
+      "line3": "— En Toute Confiance"
+    },
+    "button": {
+      "discover": "DÉCOUVRIR",
+      "talkToAdvisor": "Parler à un Conseiller"
+    },
+    "features": {
+      "readMore": "En savoir plus",
+      "readLess": "Voir moins",
+      "reccos": {
+        "name": "RECCOS — Accès simple à la propriété immobilière",
+        "desc": "RECCOS permet à quiconque d'investir dans le marché immobilier florissant de Dubaï à partir de seulement 2 000 AED en achetant des fractions réelles et enregistrées de propriétés. Vous devenez copropriétaire d'un actif tangible avec une transparence totale et une traçabilité de votre part."
+      },
+      "ownership": {
+        "name": "Propriété réelle et certifiée",
+        "desc": "Chaque propriété RECCOS est officiellement enregistrée à Dubaï. Lorsque vous investissez, vous recevez un titre de propriété et un certificat de propriété correspondant à votre contribution. Vous ne détenez pas une promesse numérique — vous détenez une preuve légale et vérifiable de propriété."
+      },
+      "marketplace": {
+        "name": "Un marché ouvert et liquide",
+        "desc": "Le Marketplace RECCOS vous permet d'acheter ou de revendre vos parts librement, selon vos objectifs. Vous pouvez sortir quand vous le souhaitez, sans attendre la vente globale de la propriété, et profiter de l'appréciation du marché en temps réel."
+      },
+      "noor": {
+        "name": "Noor — votre assistant personnel intelligent",
+        "desc": "Noor est votre assistant IA dédié. Elle recherche des propriétés qui correspondent à vos objectifs, automatise les investissements récurrents et peut agir en votre nom lorsque la bonne opportunité se présente. Si vous autorisez des investissements mensuels, Noor trouve le meilleur équilibre entre potentiel et stabilité, gérant votre capital avec précision et transparence."
+      },
+      "whyDubai": {
+        "name": "Pourquoi Dubaï ?",
+        "desc": "Le marché immobilier de Dubaï continue de battre des records : 2024 : 761 milliards d'AED en transactions (+27 % en glissement annuel). T1 2025 : 431 milliards d'AED en transactions (+26 % en volume). Plus de 90 000 investisseurs actifs par an. Un hub stable et mondial offrant croissance, liquidité et accessibilité internationale — l'environnement idéal pour la propriété fractionnée."
+      },
+      "howItWorks": {
+        "name": "Comment ça marche ?",
+        "desc": "Choisissez une propriété — ou laissez Noor en trouver une pour vous. Investissez n'importe quel montant à partir de 2 000 AED. Suivez votre propriété et les mises à jour du marché en temps réel. Revendez vos parts à tout moment via le Marketplace RECCOS. Une expérience numérique fluide, sans paperasse complexe."
+      },
+      "security": {
+        "name": "Sécurité, transparence et tranquillité d'esprit",
+        "desc": "Chaque propriété est légalement enregistrée, et tous les documents sont vérifiables et accessibles. RECCOS garantit une transparence totale de la propriété, des transactions et des dossiers. Vos actifs sont protégés, votre propriété est documentée, et votre tranquillité d'esprit est notre priorité."
+      }
+    },
+    "scrollAnimation": {
+      "title": "Nous façonnons",
+      "lines": {
+        "line1": "les espaces en opportunités",
+        "line2": "les données en perspectives",
+        "line3": "la confiance en action",
+        "line4": "l'action en propriété",
+        "line5": "la propriété en communauté",
+        "line6": "l'avenir de l'immobilier"
+      }
+    },
+    "searchForm": {
+      "title": "L'immobilier enfin accessible",
+      "price": "L'excellence immobilière réinventée",
+      "propertyTypeLabel": "Type",
+      "propertyTypePlaceholder": "Tout type",
+      "emirateLabel": "Émirat",
+      "emiratePlaceholder": "Sélectionner un Émirat",
+      "budgetLabel": "Budget",
+      "budgetPlaceholder": "Montant (AED)",
+      "searchButton": "C'EST PARTI !"
+    },
+    "featuredLaunch": {
+      "badge": "Edition limitée",
+      "title": "Emerald Dunes | Palm West",
+      "description": "Un penthouse en lévitation, 1 800 m² de terrasses, piscine miroir suspendue et suite panoramique à 270°. Accès privé au Sky Club RECCOS et conciergerie Gulfstream 24/7.",
+      "attributes": [
+        { "label": "Surface", "value": "3 250 m²" },
+        { "label": "Altitude", "value": "212 m" },
+        { "label": "Lots exclusifs", "value": "3" }
+      ],
+      "notificationTitle": "Être notifié du lancement",
+      "notificationSubtitle": "Réservez votre accès prioritaire au drop privé.",
+      "notifyCta": "programmer l'alerte",
+      "countdownLegend": "Prochain drop",
+      "countdownLabels": {
+        "days": "Jours",
+        "hours": "Heures",
+        "minutes": "Minutes",
+        "seconds": "Secondes"
+      }
+    }
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "back": "Retour"
+  }
+}
+
