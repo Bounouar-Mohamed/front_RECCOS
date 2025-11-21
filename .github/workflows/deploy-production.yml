@@ -1,0 +1,94 @@
+name: 🚀 Deploy Frontend to Production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Permet de déclencher manuellement
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  deploy:
+    name: Deploy Frontend to reccos.ae
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: 📦 Install Dependencies
+        run: npm ci
+
+      - name: 🏗️ Build Frontend
+        env:
+          NODE_ENV: production
+          NEXT_PUBLIC_API_URL: /api
+          NEXT_PUBLIC_FRONTEND_URL: https://reccos.ae
+        run: npm run build
+
+      - name: 🔐 Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: 📤 Deploy to Server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+            set -e
+            
+            echo "🚀 Déploiement FRONTEND PRODUCTION démarré..."
+            
+            # Aller dans le répertoire du frontend
+            cd /srv/all4one/frontend
+            
+            # Pull les dernières modifications depuis le repo frontend
+            git fetch origin main
+            git reset --hard origin/main
+            
+            # Installer les dépendances
+            echo "📦 Installation des dépendances..."
+            npm ci --production=false
+            
+            # Build avec les variables d'environnement de production
+            echo "🏗️ Build du frontend..."
+            export NODE_ENV=production
+            export NEXT_PUBLIC_API_URL=/api
+            export NEXT_PUBLIC_FRONTEND_URL=https://reccos.ae
+            npm run build
+            
+            # Redémarrer le service PM2
+            echo "🔄 Redémarrage du service frontend..."
+            pm2 restart reccos-frontend || pm2 start ecosystem.config.js --name reccos-frontend
+            pm2 save
+            
+            echo "✅ Déploiement FRONTEND PRODUCTION terminé !"
+          EOF
+
+      - name: ✅ Health Check
+        run: |
+          sleep 15
+          curl -f https://reccos.ae || exit 1
+
+      - name: 📢 Notify Success
+        if: success()
+        run: |
+          echo "✅ Déploiement frontend en production réussi !"
+          echo "🌐 https://reccos.ae"
+
+      - name: ❌ Notify Failure
+        if: failure()
+        run: |
+          echo "❌ Échec du déploiement frontend en production"
+          exit 1
+
