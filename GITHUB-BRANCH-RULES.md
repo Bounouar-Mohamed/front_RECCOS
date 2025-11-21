@@ -28,8 +28,9 @@ Production Protection
 ##### ✅ **Require status checks to pass before merging**
 - ✅ **Require branches to be up to date before merging**
 - ✅ **Status checks that are required** :
-  - `build` (si tu as un workflow de build)
-  - `deploy-production` (si tu veux forcer le workflow de déploiement)
+  - `Build and Test` (job de build du workflow)
+  
+  **⚠️ Important** : Tu dois d'abord faire un push sur `main` pour que GitHub détecte les status checks. Ensuite, tu pourras les sélectionner dans les règles.
 
 ##### ✅ **Require conversation resolution before merging**
 - ✅ **Require all conversations on code to be resolved before merging**
