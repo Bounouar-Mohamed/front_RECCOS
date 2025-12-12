@@ -1,0 +1,112 @@
+.section {
+  position: relative;
+  padding: 20vh 0;
+}
+
+.cards {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.cardWrapper {
+  position: relative;
+}
+
+.card {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  border-radius: clamp(24px, 4vw, 48px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  padding: clamp(2rem, 4vw, 4rem);
+  box-shadow: 0 30px 80px rgba(10, 15, 34, 0.15);
+}
+
+.cardInner {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 1;
+}
+
+.cardHeader {
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 0.85rem;
+  color: rgba(8, 8, 10, 0.6);
+}
+
+.title {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 500;
+  line-height: 1.05;
+  margin: 0.5rem 0 1rem;
+  color: #05090f;
+}
+
+.description {
+  font-size: clamp(1rem, 1.8vw, 1.35rem);
+  color: rgba(5, 9, 15, 0.8);
+  max-width: 52ch;
+}
+
+.link {
+  margin-top: 2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  color: #05090f;
+  text-decoration: none;
+}
+
+.link::after {
+  content: '↗';
+  transition: transform 0.3s ease;
+}
+
+.link:hover::after {
+  transform: translate(4px, -4px);
+}
+
+.imageFrame {
+  position: absolute;
+  inset: clamp(1.5rem, 3vw, 3rem);
+  border-radius: clamp(16px, 3vw, 32px);
+  overflow: hidden;
+  z-index: 0;
+}
+
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(145deg, rgba(5, 9, 15, 0.05), rgba(255, 255, 255, 0.45));
+  z-index: 1;
+}
+
+.image {
+  object-fit: cover;
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 10vh 0;
+  }
+
+  .card {
+    border-radius: 32px;
+  }
+
+  .imageFrame {
+    inset: 1rem;
+  }
+}
+
+

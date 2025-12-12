@@ -19,10 +19,10 @@
  *      password: 'SecurePass123!'
  *    });
  * 
- * 3. Le token JWT est automatiquement:
- *    - Stocké dans localStorage ('access_token')
- *    - Ajouté aux requêtes suivantes via l'intercepteur axios
- *    - Utilisé pour authentifier toutes les requêtes API
+ * 3. La réponse contient les tokens suivants :
+ *    - access_token (JWT) à stocker côté client (géré par useAuthStore)
+ *    - refresh_token permettant de garder la session active
+ *    - L'intercepteur axios ajoute automatiquement le token aux requêtes ultérieures
  * 
  * 4. Les données utilisateur sont stockées dans localStorage ('user')
  * 
@@ -48,6 +48,10 @@
 import { apiClient, getErrorMessage } from './client';
 import type { ApiResponse } from './client';
 import type { AxiosResponse } from 'axios';
+import { AxiosError } from 'axios';
+import type { User } from '../types/user';
+export type { User };
+import { clearSession, getStoredUser } from '../auth/sessionStorage';
 
 // Types
 export interface RegisterData {
@@ -113,34 +117,56 @@ export interface LoginData {
  *   }
  * }
  * 
- * IMPORTANT: Le token est automatiquement stocké dans localStorage par authService.login()
- * Le token est automatiquement ajouté aux requêtes suivantes via l'intercepteur axios dans client.ts
+ * IMPORTANT: Le token est renvoyé dans la réponse et doit être persisté côté client
+ * (le store Zustand `useAuthStore` s'occupe de cette étape). L'intercepteur axios
+ * ajoute ensuite automatiquement le token aux requêtes suivantes.
  * Format: Authorization: Bearer {access_token}
  */
 export interface LoginResponse {
   access_token: string; // JWT token - à utiliser dans le header Authorization pour les requêtes authentifiées
-  user: {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    role: string; // CLIENT | AGENT | ADMIN
-    username?: string;
-    emailVerified?: boolean;
-    isActive?: boolean;
+  refresh_token?: string | null;
+  expiresAt?: string;
+  refreshExpiresAt?: string;
+  user: User;
+  session?: {
+    lastHeartbeatAt?: string;
+    heartbeatIntervalSeconds?: number;
   };
 }
 
-export interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  username: string;
-  role: string;
-  emailVerified: boolean;
-  isActive: boolean;
-}
+/**
+ * Vérifie si l'erreur est une erreur 401 Unauthorized confirmée
+ */
+const isUnauthorizedError = (error: unknown): boolean => {
+  if (error instanceof AxiosError && error.response) {
+    return error.response.status === 401;
+  }
+  return false;
+};
+
+const normalizeAuthResponse = (payload: any): LoginResponse => {
+  const responseData = payload?.data ?? payload;
+  if (!responseData) {
+    throw new Error('Réponse invalide du serveur');
+  }
+
+  const accessToken = responseData.access_token || responseData.accessToken;
+  const refreshToken = responseData.refresh_token || responseData.refreshToken || null;
+  const user = responseData.user;
+
+  if (!accessToken || !user) {
+    throw new Error('Réponse invalide du serveur');
+  }
+
+  return {
+    access_token: accessToken,
+    refresh_token: refreshToken,
+    expiresAt: responseData.expiresAt,
+    refreshExpiresAt: responseData.refreshExpiresAt,
+    user,
+    session: responseData.session,
+  };
+};
 
 export interface ForgotPasswordData {
   email: string;
@@ -278,39 +304,9 @@ export const authService = {
     try {
       console.log('[authService] Making POST request to /auth/login...');
       const response = await apiClient.post<LoginResponse>('/auth/login', data);
-      
-      console.log('[authService] Response received:', {
-        status: response.status,
-        hasData: !!response.data,
-        hasToken: !!(response.data as any)?.data?.access_token || !!(response.data as any)?.access_token,
-        hasUser: !!(response.data as any)?.data?.user || !!(response.data as any)?.user
-      });
-      
-      // Le backend NestJS utilise TransformInterceptor qui enveloppe la réponse dans :
-      // { data: { access_token, user }, statusCode, message, timestamp }
-      // Donc on doit accéder à response.data.data
-      const wrappedResponse = response.data as any;
-      const responseData = wrappedResponse?.data || wrappedResponse; // Fallback si pas d'enveloppe
-      
-      // Vérifier que la réponse contient les données attendues
-      if (!responseData || !responseData.access_token || !responseData.user) {
-        console.error('[authService] Invalid response structure:', response.data);
-        throw new Error('Réponse invalide du serveur');
-      }
-      
-      console.log('[authService] Storing token and user in localStorage...');
-      // Stocker le token et l'utilisateur
-      if (typeof window !== 'undefined') {
-        // Le cookie httpOnly est déjà défini par le proxy API pour /auth/login
-        // On stocke seulement dans localStorage pour les appels API côté client
-        localStorage.setItem('access_token', responseData.access_token);
-        localStorage.setItem('user', JSON.stringify(responseData.user));
-        
-        console.log('[authService] Token and user stored in localStorage (httpOnly cookie défini par le proxy)');
-      }
-      
-      console.log('[authService] Login successful, returning data');
-      return responseData;
+      const normalized = normalizeAuthResponse(response.data);
+      console.log('[authService] Login successful, normalized response ready');
+      return normalized;
     } catch (error) {
       console.error('[authService] Login error:', error);
       console.error('[authService] Error type:', typeof error);
@@ -319,12 +315,8 @@ export const authService = {
       console.error('[authService] Error response data:', (error as any)?.response?.data);
       console.error('[authService] Error response status:', (error as any)?.response?.status);
       
-      // Réinitialiser le storage en cas d'erreur
-      if (typeof window !== 'undefined') {
-        console.log('[authService] Clearing localStorage...');
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('user');
-      }
+      // Seulement effacer si c'est une vraie erreur 401, pas une erreur réseau
+      // (login n'a pas de session à effacer de toute façon, donc on peut l'ignorer)
       
       const errorMessage = getErrorMessage(error);
       console.log('[authService] Error message extracted:', errorMessage);
@@ -443,83 +435,42 @@ export const authService = {
         fullData: response?.data
       });
       
-      // Le backend NestJS utilise TransformInterceptor qui enveloppe la réponse dans :
-      // { data: { access_token, user }, statusCode, message, timestamp }
-      // Donc on doit accéder à response.data.data
-      const wrappedResponse = response.data as any;
-      
-      // Vérifier d'abord si c'est la structure enveloppée
-      let responseData: any;
-      if (wrappedResponse?.data && typeof wrappedResponse.data === 'object') {
-        // Structure enveloppée: { data: { access_token, user }, ... }
-        responseData = wrappedResponse.data;
-        console.log('[authService.verifyOTP] Using wrapped structure, data:', {
-          hasAccessToken: !!responseData.access_token,
-          hasUser: !!responseData.user
-        });
-      } else {
-        // Structure directe: { access_token, user }
-        responseData = wrappedResponse;
-        console.log('[authService.verifyOTP] Using direct structure, data:', {
-          hasAccessToken: !!responseData?.access_token,
-          hasUser: !!responseData?.user
-        });
-      }
-      
-      // Vérification de sécurité
-      if (!responseData) {
-        console.error('[authService.verifyOTP] No data in response:', response);
-        throw new Error('Réponse invalide du serveur');
-      }
-      
-      if (!responseData.access_token) {
-        console.error('[authService.verifyOTP] No access_token in response:', {
-          responseData,
-          keys: Object.keys(responseData || {}),
-          wrappedResponseKeys: Object.keys(wrappedResponse || {})
-        });
-        throw new Error('Token d\'accès manquant dans la réponse');
-      }
-      
-      if (!responseData.user) {
-        console.error('[authService.verifyOTP] No user in response:', {
-          responseData,
-          keys: Object.keys(responseData || {}),
-          wrappedResponseKeys: Object.keys(wrappedResponse || {})
-        });
-        throw new Error('Données utilisateur manquantes dans la réponse');
-      }
-      
+      const normalized = normalizeAuthResponse(response.data);
       console.log('[authService.verifyOTP] Successfully extracted data:', {
-        hasToken: !!responseData.access_token,
-        hasUser: !!responseData.user,
-        userId: responseData.user?.id
+        hasToken: !!normalized.access_token,
+        hasUser: !!normalized.user,
+        userId: normalized.user?.id,
       });
-      
-      // Stocker le token et l'utilisateur
-      if (typeof window !== 'undefined') {
-        // Le cookie httpOnly est déjà défini par le proxy API
-        // On stocke seulement dans localStorage pour les appels API côté client
-        localStorage.setItem('access_token', responseData.access_token);
-        localStorage.setItem('user', JSON.stringify(responseData.user));
-        
-        console.log('[authService.verifyOTP] Token and user stored in localStorage', {
-          hasToken: !!localStorage.getItem('access_token'),
-          hasUser: !!localStorage.getItem('user'),
-          documentCookie: document.cookie,
-          cookieIncludesAuth: document.cookie.includes('auth') || document.cookie.includes('token'),
-        });
-      }
-      
-      return responseData;
+      return normalized;
     } catch (error) {
       console.error('[authService.verifyOTP] Error:', error);
-      // Réinitialiser le storage en cas d'erreur
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('user');
-      }
+      // Ne pas effacer la session pour des erreurs réseau
+      // (verifyOTP n'a pas de session à effacer de toute façon)
       throw new Error(getErrorMessage(error));
+    }
+  },
+
+  /**
+   * Rafraîchir la session à l'aide du refresh token
+   */
+  async refreshSession(refreshToken: string): Promise<LoginResponse> {
+    try {
+      const response = await apiClient.post<LoginResponse>('/auth/refresh', { refreshToken });
+      return normalizeAuthResponse(response.data);
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  /**
+   * Heartbeat pour garder la session active
+   */
+  async heartbeat(refreshToken: string): Promise<LoginResponse> {
+    try {
+      const response = await apiClient.post<LoginResponse>('/auth/heartbeat', { refreshToken });
+      return normalizeAuthResponse(response.data);
+    } catch (error) {
+      throw error;
     }
   },
 
@@ -527,11 +478,8 @@ export const authService = {
    * Déconnexion
    */
   async logout(): Promise<void> {
+    clearSession();
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('user');
-      
-      // Supprimer le cookie httpOnly via une API route
       try {
         await fetch('/api/auth/clear-cookie', {
           method: 'POST',
@@ -547,17 +495,7 @@ export const authService = {
    * Récupérer l'utilisateur actuel depuis le storage
    */
   getCurrentUser(): User | null {
-    if (typeof window !== 'undefined') {
-      const userStr = localStorage.getItem('user');
-      if (userStr) {
-        try {
-          return JSON.parse(userStr) as User;
-        } catch {
-          return null;
-        }
-      }
-    }
-    return null;
+    return getStoredUser();
   },
 
   /**

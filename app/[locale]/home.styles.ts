@@ -1,5 +1,22 @@
 import { css } from '@/styled-system/css';
 
+export const homeStyles = {
+  main: css({
+    bg: 'black',
+    margin: 0,
+    padding: 0,
+    minH: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+  }),
+
+  // Style pour wrapper chaque section avec espacement uniforme
+  sectionWrapper: css({
+    py: '5%',
+    w: '100%',
+  }),
+};
+
 export const skiper8Styles = {
   preloaderContainer: css({
     position: 'fixed',

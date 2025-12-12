@@ -16,6 +16,7 @@ const publicRoutes = [
   '/auth/callback',
   '/launchpad', // Page Launchpad (publique)
   '/exchange', // Page Exchange (publique)
+  '/noor', // Page Noor IA (publique)
 ];
 
 export function middleware(request: NextRequest) {

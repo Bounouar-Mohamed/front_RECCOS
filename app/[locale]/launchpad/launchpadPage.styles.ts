@@ -2,15 +2,33 @@ import { css } from '@/styled-system/css';
 
 export const launchpadPageStyles = {
   container: css({
-    minH: '100vh',
+    width: '100%',
+    minHeight: '100vh',
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    px: { base: 4, md: 6 },
-    py: { base: 8, md: 12 },
     bg: '#000000',
     color: '#ffffff',
+  }),
+
+  // Style pour wrapper chaque section avec espacement uniforme
+  sectionWrapper: css({
+    width: '100%',
+    display: 'block',
+    py: '2.5vh',
+  }),
+
+  // Style pour Skiper32 sans padding-top
+  sectionWrapperNoTopPadding: css({
+    paddingTop: '0 !important',
+    width: '100%',
+    display: 'block',
+  }),
+
+  // Style pour la première section avec espacement supplémentaire pour la navbar
+  firstSectionWrapper: css({
+    paddingTop: { base: 'calc(5vh + 100px) !important', md: 'calc(5vh + 110px) !important' },
+    width: '100%',
+    display: 'block',
   }),
 
   grid: css({

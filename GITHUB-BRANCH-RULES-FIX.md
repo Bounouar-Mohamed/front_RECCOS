@@ -106,3 +106,5 @@ Après configuration :
 - ✅ Historique linéaire
 - ✅ Pas de bypass possible
 
+
+

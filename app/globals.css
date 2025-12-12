@@ -1,32 +1,46 @@
 @layer reset, base, tokens, recipes, utilities;
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@layer reset {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 }
 
-html, body {
-  height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
+/* ✅ Laisse Lenis gérer le scroll – pas de overflow-y ici */
+html,
+body {
   background-color: black;
+  /* PAS de min-height ici, pas de overflow-y */
 }
 
-#__next {
-  height: 100%;
+/* ✅ CSS recommandé pour Lenis */
+html.lenis {
+  height: auto;
 }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+html.lenis body {
+  height: auto;
 }
 
-/* Masquer le contenu de l'app jusqu'à ce que le preloader soit géré */
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* Ton preloader peut rester, il ne touche pas au scroll */
 body:not([data-preloader-ready]) #app-content {
   visibility: hidden;
   opacity: 0;
@@ -37,3 +51,312 @@ body[data-preloader-ready] #app-content {
   opacity: 1;
   transition: opacity 0.3s ease-in-out;
 }
+
+/* spin, etc… */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Styles pour le popup Mapbox style Bento */
+.mapbox-popup-comic-bubble .mapboxgl-popup-content {
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.mapbox-popup-comic-bubble .mapboxgl-popup-tip {
+  display: none !important;
+}
+
+.mapbox-popup-comic-bubble .mapboxgl-popup-close-button {
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-size: 16px !important;
+  font-weight: 300 !important;
+  font-family: Arial, sans-serif !important;
+  padding: 0 !important;
+  right: 6px !important;
+  top: 6px !important;
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 50% !important;
+  background: rgba(0, 0, 0, 0.3) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 10 !important;
+  line-height: 0 !important;
+  opacity: 0.7 !important;
+  text-indent: 0 !important;
+}
+
+.mapbox-popup-comic-bubble .mapboxgl-popup-close-button:hover {
+  background: rgba(0, 0, 0, 0.5) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  opacity: 1 !important;
+}
+
+/* Styles pour les boîtes Bento */
+.bento-popup-container {
+  position: relative;
+}
+
+.bento-box {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bento-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12), 
+              0 2px 8px rgba(0, 0, 0, 0.08),
+              inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Marqueur personnalisé avec ondes animées adaptatives au zoom */
+.custom-map-marker {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  --pulse-scale: 1;
+  --pulse-opacity: 1;
+  transition: transform 0.3s ease;
+}
+
+/* Mode zoom bas (vue d'ensemble) - pas d'ondes */
+.custom-map-marker.zoom-low {
+  --pulse-scale: 0;
+  --pulse-opacity: 0;
+}
+
+.custom-map-marker.zoom-low .marker-center {
+  width: 8px;
+  height: 8px;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4),
+              0 1px 4px rgba(0, 0, 0, 0.3);
+  animation: none;
+}
+
+/* Mode zoom moyen - ondes réduites */
+.custom-map-marker.zoom-medium {
+  --pulse-scale: 0.6;
+  --pulse-opacity: 0.5;
+}
+
+.custom-map-marker.zoom-medium .marker-center {
+  width: 10px;
+  height: 10px;
+}
+
+/* Mode zoom haut - ondes complètes */
+.custom-map-marker.zoom-high {
+  --pulse-scale: 1;
+  --pulse-opacity: 1;
+}
+
+.marker-pulse-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid;
+  opacity: 0;
+  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  transform: scale(var(--pulse-scale, 1));
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.custom-map-marker.zoom-low .marker-pulse-ring {
+  animation: none;
+  opacity: 0 !important;
+}
+
+.marker-pulse-ring-1 {
+  width: 40px;
+  height: 40px;
+  border-color: rgba(255, 255, 255, calc(0.8 * var(--pulse-opacity, 1)));
+  background: radial-gradient(circle, rgba(255, 255, 255, calc(0.3 * var(--pulse-opacity, 1))) 0%, transparent 70%);
+  animation-delay: 0s;
+}
+
+.marker-pulse-ring-2 {
+  width: 40px;
+  height: 40px;
+  border-color: rgba(255, 255, 255, calc(0.6 * var(--pulse-opacity, 1)));
+  background: radial-gradient(circle, rgba(255, 255, 255, calc(0.2 * var(--pulse-opacity, 1))) 0%, transparent 70%);
+  animation-delay: 0.67s;
+}
+
+.marker-pulse-ring-3 {
+  width: 40px;
+  height: 40px;
+  border-color: rgba(255, 255, 255, calc(0.4 * var(--pulse-opacity, 1)));
+  background: radial-gradient(circle, rgba(255, 255, 255, calc(0.1 * var(--pulse-opacity, 1))) 0%, transparent 70%);
+  animation-delay: 1.33s;
+}
+
+.marker-center {
+  position: relative;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FFFFFF 0%, #E0E0E0 100%);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5),
+              0 2px 8px rgba(0, 0, 0, 0.3),
+              inset 0 1px 2px rgba(255, 255, 255, 0.8);
+  z-index: 10;
+  animation: pulse-center 2s ease-in-out infinite;
+  transition: width 0.3s ease, height 0.3s ease, box-shadow 0.3s ease;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse-center {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5),
+                0 2px 8px rgba(0, 0, 0, 0.3),
+                inset 0 1px 2px rgba(255, 255, 255, 0.8);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.6),
+                0 3px 12px rgba(0, 0, 0, 0.4),
+                inset 0 1px 2px rgba(255, 255, 255, 0.9);
+  }
+}
+
+/* Animation pour le loader à points */
+@keyframes dotPulse {
+  0%, 80%, 100% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Animation d'apparition fluide pour les cards */
+@keyframes cardAppear {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Animation pour l'indicateur "Live" style Apple iOS */
+@keyframes livePulse {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 8px rgba(52, 199, 89, 0.8), 0 0 16px rgba(52, 199, 89, 0.4);
+  }
+  50% {
+    opacity: 0.6;
+    box-shadow: 0 0 4px rgba(52, 199, 89, 0.5), 0 0 8px rgba(52, 199, 89, 0.2);
+  }
+}
+
+/* Animation pour l'icône de succès */
+@keyframes successPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes successCheckmark {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes successGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(52, 199, 89, 0.3), 0 0 40px rgba(52, 199, 89, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(52, 199, 89, 0.5), 0 0 60px rgba(52, 199, 89, 0.2);
+  }
+}
+
+/* Animation marquee pour le slogan Hero - boucle infinie fluide */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    /* sloganTrack fait 200vw, donc on translate de -100vw (une copie complète) */
+    transform: translateX(-100vw);
+  }
+}
+
+/* ========================================
+   Animations pour Noor Realtime Voice
+   ======================================== */
+
+/* Animation de pulsation pour le bouton vocal actif */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(147, 51, 234, 0.4);
+    opacity: 0.6;
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(147, 51, 234, 0);
+    opacity: 1;
+  }
+}
+
+/* Animation d'onde pour les barres de visualisation audio */
+@keyframes wave-animation {
+  0%, 100% {
+    transform: scaleY(0.3);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+/* Animation de rotation pour le gradient border */
+@keyframes rotate-gradient {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+

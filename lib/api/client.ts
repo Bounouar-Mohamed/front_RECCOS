@@ -1,4 +1,6 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import { persistSession, getStoredRefreshToken } from '../auth/sessionStorage';
+import { emitForceLogout } from '../auth/forceLogoutEvent';
 
 /**
  * Configuration de l'URL de l'API
@@ -51,6 +53,18 @@ const API_URL = (() => {
   return '/api';
 })();
 
+type RawAuthResponse = {
+  access_token: string;
+  refresh_token: string;
+  expiresAt?: string;
+  refreshExpiresAt?: string;
+  user: any;
+  session?: {
+    lastHeartbeatAt?: string;
+    heartbeatIntervalSeconds?: number;
+  };
+};
+
 // Instance axios de base
 export const apiClient: AxiosInstance = axios.create({
   baseURL: API_URL,
@@ -61,6 +75,52 @@ export const apiClient: AxiosInstance = axios.create({
   // Important : s'assurer que les requêtes sont faites depuis le client
   withCredentials: false,
 });
+
+const refreshClient = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+let isRefreshing = false;
+const refreshQueue: Array<(token: string | null) => void> = [];
+
+const notifyRefreshQueue = (token: string | null) => {
+  refreshQueue.splice(0, refreshQueue.length).forEach((callback) => callback(token));
+};
+
+const enqueueRefreshCallback = (callback: (token: string | null) => void) => {
+  refreshQueue.push(callback);
+};
+
+const normalizeAuthPayload = (payload: any): RawAuthResponse => {
+  const data = payload?.data ?? payload;
+  if (!data?.access_token || !data?.refresh_token || !data?.user) {
+    throw new Error('Réponse invalide du serveur');
+  }
+  return data as RawAuthResponse;
+};
+
+const requestNewAccessToken = async (): Promise<string | null> => {
+  const refreshToken = getStoredRefreshToken();
+  if (!refreshToken) {
+    return null;
+  }
+
+  const response = await refreshClient.post<RawAuthResponse>('/auth/refresh', { refreshToken });
+  const normalized = normalizeAuthPayload(response.data);
+
+  persistSession({
+    accessToken: normalized.access_token,
+    refreshToken: normalized.refresh_token,
+    expiresAt: normalized.expiresAt,
+    refreshExpiresAt: normalized.refreshExpiresAt,
+    user: normalized.user,
+  });
+
+  return normalized.access_token;
+};
 
 console.log('[apiClient] Axios instance created with baseURL:', API_URL);
 
@@ -78,7 +138,7 @@ console.log('[apiClient] Axios instance created with baseURL:', API_URL);
  * - Fonctionne automatiquement pour toutes les requêtes via apiClient
  * 
  * IMPORTANT POUR L'INTÉGRATION:
- * - Après authService.login(), le token est stocké dans localStorage
+ * - Après authentification (gérée via useAuthStore), le token est stocké dans localStorage
  * - Toutes les requêtes suivantes via apiClient incluent automatiquement le token
  * - Pas besoin de gérer manuellement le header Authorization dans vos composants
  * - Le token est valide jusqu'à expiration (géré par le backend)
@@ -98,6 +158,8 @@ console.log('[apiClient] Axios instance created with baseURL:', API_URL);
  */
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
+    const requiresAuth = config.requiresAuth ?? true;
+    config.requiresAuth = requiresAuth;
     const fullUrl = `${config.baseURL}${config.url}`;
     console.log('[apiClient] Request interceptor:', {
       method: config.method?.toUpperCase(),
@@ -111,7 +173,7 @@ apiClient.interceptors.request.use(
     
     // Récupérer le token depuis le storage (côté client uniquement)
     // Le token a été stocké par authService.login() après une connexion réussie
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && requiresAuth) {
       const token = localStorage.getItem('access_token');
       if (token && config.headers) {
         // Ajouter le token au header Authorization pour authentifier la requête
@@ -178,6 +240,11 @@ apiClient.interceptors.response.use(
 
     const status = error.response.status;
     const errorData = error.response.data as ApiError;
+    const originalRequest = error.config as (InternalAxiosRequestConfig & {
+      _retry?: boolean;
+    });
+    const requiresAuth = originalRequest?.requiresAuth ?? true;
+    const skipAuthRedirect = originalRequest?.skipAuthRedirect ?? false;
     
     console.log('[apiClient] Error details:', {
       status,
@@ -188,26 +255,97 @@ apiClient.interceptors.response.use(
     // 401 Unauthorized - Token expiré ou invalide (mais pas pour les erreurs de login)
     if (status === 401) {
       console.log('[apiClient] 401 Unauthorized error');
-      // Ne pas rediriger si on est déjà sur la page de login (c'est une erreur de credentials)
       const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
       const isLoginPage = currentPath.includes('/login');
-      
-      console.log('[apiClient] Current path:', currentPath, 'isLoginPage:', isLoginPage);
-      
-      if (!isLoginPage && typeof window !== 'undefined') {
-        console.log('[apiClient] Not on login page, clearing storage and redirecting...');
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('user');
-        // Rediriger vers login si on n'est pas déjà sur une page publique
-        if (!currentPath.includes('/register')) {
-          window.location.href = '/login';
+      const requestUrl = originalRequest?.url || '';
+      const isAuthEndpoint =
+        requestUrl.includes('/auth/login') ||
+        requestUrl.includes('/auth/refresh') ||
+        requestUrl.includes('/auth/verify-otp') ||
+        requestUrl.includes('/auth/send-otp');
+
+      const refreshToken = getStoredRefreshToken();
+
+      if (
+        requiresAuth &&
+        !isLoginPage &&
+        !isAuthEndpoint &&
+        refreshToken &&
+        originalRequest
+      ) {
+        if (originalRequest._retry) {
+          console.warn('[apiClient] Retry already attempted for this request');
+        } else {
+          originalRequest._retry = true;
+
+          try {
+            if (isRefreshing) {
+              console.log('[apiClient] Refresh already in progress, queueing request');
+              return new Promise((resolve, reject) => {
+                enqueueRefreshCallback((token) => {
+                  if (!token) {
+                    reject(new Error('Unable to refresh session'));
+                    return;
+                  }
+                  originalRequest.headers = originalRequest.headers ?? {};
+                  originalRequest.headers.Authorization = `Bearer ${token}`;
+                  resolve(apiClient(originalRequest));
+                });
+              });
+            }
+
+            isRefreshing = true;
+            const newToken = await requestNewAccessToken();
+            isRefreshing = false;
+
+            if (newToken) {
+              notifyRefreshQueue(newToken);
+              originalRequest.headers = originalRequest.headers ?? {};
+              originalRequest.headers.Authorization = `Bearer ${newToken}`;
+              console.log('[apiClient] Access token refreshed, retrying original request');
+              return apiClient(originalRequest);
+            }
+
+            notifyRefreshQueue(null);
+          } catch (refreshError: any) {
+            console.error('[apiClient] Refresh token flow failed:', refreshError);
+            notifyRefreshQueue(null);
+            isRefreshing = false;
+            // Seulement effacer si c'est une vraie erreur 401, pas une erreur réseau
+            const isNetworkError = !refreshError?.response && (
+              refreshError?.code === 'ECONNABORTED' ||
+              refreshError?.message?.includes('Network') ||
+              refreshError?.message?.includes('connexion')
+            );
+            if (!isNetworkError) {
+              emitForceLogout({
+                reason: 'session-expired',
+                message: 'Votre session a expiré. Veuillez vous reconnecter.',
+              });
+            }
+          }
         }
       }
+
+      console.log('[apiClient] Current path:', currentPath, 'isLoginPage:', isLoginPage);
       
-      // Toujours propager l'erreur pour que le catch puisse la gérer
-      const message = errorData?.message || 'Identifiants invalides';
-      console.log('[apiClient] Rejecting with message:', message);
-      return Promise.reject(new Error(Array.isArray(message) ? message[0] : message));
+      // Seulement rediriger si c'est une vraie erreur 401 avec réponse serveur
+      // (pas une erreur réseau transitoire lors du hot reload)
+      const hasServerResponse = !!error.response;
+      if (!isLoginPage && requiresAuth && !skipAuthRedirect && hasServerResponse) {
+        emitForceLogout({
+          reason: 'session-expired',
+          message: 'Votre session a expiré. Veuillez vous reconnecter.',
+        });
+      }
+      
+      const message = Array.isArray(errorData?.message)
+        ? errorData?.message[0]
+        : errorData?.message || 'Identifiants invalides';
+      if (error) {
+        (error as any).message = message;
+      }
+      return Promise.reject(error);
     }
 
     // 429 Too Many Requests - Rate limiting
@@ -222,6 +360,12 @@ apiClient.interceptors.response.use(
     // 400 Bad Request - Erreurs de validation
     if (status === 400) {
       const message = errorData?.message || 'Données invalides';
+      return Promise.reject(new Error(Array.isArray(message) ? message[0] : message));
+    }
+
+    // 403 Forbidden - Accès refusé (propriété non disponible, etc.)
+    if (status === 403) {
+      const message = errorData?.message || 'Accès refusé';
       return Promise.reject(new Error(Array.isArray(message) ? message[0] : message));
     }
 

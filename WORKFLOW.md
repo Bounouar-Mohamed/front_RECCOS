@@ -133,3 +133,5 @@ cd /srv/all4one/frontend
 - `.github/workflows/deploy-production.yml` - Workflow de déploiement
 - `scripts/deploy.sh` - Script de déploiement
 
+
+

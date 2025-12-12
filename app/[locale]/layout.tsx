@@ -6,9 +6,17 @@ import { routing } from '@/i18n/routing';
 import { Metadata } from 'next';
 import { css } from '@/styled-system/css';
 import '../globals.css';
-import { Navbar } from './components/Navbar';
-import { PreloaderWrapper } from './components/PreloaderWrapper';
-import { Logo } from '@/components/Logo';
+import { Navbar } from '../components/Navbar';
+import { PreloaderWrapper } from '../components/PreloaderWrapper';
+import { Logo } from '@/app/ui/logo';
+import { LenisProvider } from '../components/LenisProvider';
+import { LenisScrollTriggerBridge } from '../components/LenisScrollTriggerBridge';
+import { DebugScroll } from '../components/DebugScroll';
+import { ConditionalFooter } from '@/app/components/ConditionalFooter';
+import { MobileGuard } from '../components/MobileGuard';
+import { ToastProvider } from '@/app/components/Toast/ToastProvider';
+import { AuthHydrator } from '@/app/components/AuthHydrator';
+
 
 const headerStyles = {
   container: css({
@@ -205,7 +213,6 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       dir={locale === 'ar' ? 'rtl' : 'ltr'}
-      className="h-full"
     >
       <head>
         <meta charSet="utf-8" />
@@ -241,23 +248,27 @@ export default async function LocaleLayout({
           }}
         />
       </head>
-      <body className={`h-full bg-[#f5f3ee] ${bebasNeue.variable} ${inter.variable}`}>
-        <NextIntlClientProvider messages={messages}>
-          <PreloaderWrapper />
-          <div id="app-content">
-          <header className={headerStyles.container}>
-            <Logo />
-          <Navbar />
-          </header>
-          {children}
-          </div>
-        </NextIntlClientProvider>
+      <body className={`${bebasNeue.variable} ${inter.variable}`} suppressHydrationWarning>
+        <MobileGuard>
+          <LenisProvider>
+            {/* <LenisScrollTriggerBridge /> */}
+            <NextIntlClientProvider messages={messages}>
+              <ToastProvider>
+                <AuthHydrator />
+                <PreloaderWrapper />
+                <DebugScroll />
+                <div id="app-content" className="h-full">
+                  <header className={headerStyles.container}>
+                    <Navbar />
+                  </header>
+                  {children}
+                  <ConditionalFooter />
+                </div>
+              </ToastProvider>
+            </NextIntlClientProvider>
+          </LenisProvider>
+        </MobileGuard>
       </body>
     </html>
   );
 }
-
-
-
-
-

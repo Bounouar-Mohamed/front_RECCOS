@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '@/lib/store/auth-store';
@@ -14,6 +15,26 @@ export default function WalletPage() {
   const t = useTranslations('auth');
   const tCommon = useTranslations('common');
   const { user, isAuthenticated } = useAuthStore();
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  if (!isHydrated) {
+    return (
+      <main className={walletPageStyles.container}>
+        <motion.p
+          className={walletPageStyles.loading}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+        >
+          {tCommon('loading')}
+        </motion.p>
+      </main>
+    );
+  }
 
   if (!isAuthenticated || !user) {
     return (

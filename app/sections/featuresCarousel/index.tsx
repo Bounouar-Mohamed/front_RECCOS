@@ -1,0 +1,2 @@
+export { FeaturesCarousel } from './FeaturesCarousel';
+

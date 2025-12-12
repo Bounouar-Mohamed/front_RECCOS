@@ -1,0 +1,2 @@
+export { VanishForm } from './vanishForm';
+

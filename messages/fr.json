@@ -86,6 +86,7 @@
     "success": "Connexion réussie !",
     "redirecting": "Redirection en cours...",
     "comingSoon": "Bientôt disponible",
+    "loading": "Chargement...",
     "copyright": "reccos.ae © 2025",
     "error": "Une erreur est survenue",
     "welcome": "Bienvenue",
@@ -95,18 +96,37 @@
     "emailVerified": "Email vérifié",
     "accountActive": "Compte actif",
     "yes": "Oui",
-    "no": "Non"
+    "no": "Non",
+    "accountDisabled": "Votre compte a été désactivé. Contactez contact@reccos.ae pour en savoir plus."
   },
   "navbar": {
-    "ariaLabel": "Navigation principale",
-    "links": {
+  "ariaLabel": "Navigation principale",
+  "links": {
       "home": "Accueil",
       "properties": "Launchpad",
       "marketplace": "Exchange",
+      "noor": "Noor",
       "login": "Connexion",
       "signup": "Inscription",
       "dashboard": "Portefeuille",
+      "admin": "Admin",
+      "adminUsers": "Gestion des comptes",
       "logout": "Déconnexion"
+    },
+    "actions": {
+      "menu": "Menu",
+      "close": "Fermer"
+    },
+    "meta": {
+      "privacy": "Politique de confidentialité",
+      "terms": "Conditions d'utilisation",
+      "languages": "Langues",
+      "adminSection": "Zone sensible"
+    },
+    "panel": {
+      "pulse": "Pulse marché",
+      "nextDrops": "Prochains drops",
+      "bids": "Offres actives"
     }
   },
   "home": {
@@ -115,6 +135,27 @@
       "line1": "Trouvez, Achetez, Vendez & Investissez",
       "line2": "dans l'Immobilier de Dubaï",
       "line3": "— En Toute Confiance"
+    },
+    "hero": {
+      "title": "Comment ça fonctionne",
+      "steps": {
+        "choose": {
+          "title": "Choisir une propriété",
+          "description": "Parcourez les propriétés disponibles ou laissez Noor en trouver une pour vous."
+        },
+        "invest": {
+          "title": "Investir",
+          "description": "À partir de 2 000 AED. Montant libre selon vos objectifs."
+        },
+        "own": {
+          "title": "Devenir propriétaire",
+          "description": "Recevez votre titre de propriété et certificat d'ownership. Propriété réelle, enregistrée à Dubaï."
+        },
+        "trade": {
+          "title": "Vendre ou garder",
+          "description": "Revendez vos parts sur le marketplace quand vous le souhaitez, ou gardez-les."
+        }
+      }
     },
     "button": {
       "discover": "DÉCOUVRIR",
@@ -185,14 +226,461 @@
       ],
       "notificationTitle": "Être notifié du lancement",
       "notificationSubtitle": "Réservez votre accès prioritaire au drop privé.",
-      "notifyCta": "programmer l'alerte",
+      "notifyCta": "Programmer l'alerte",
       "countdownLegend": "Prochain drop",
       "countdownLabels": {
         "days": "Jours",
         "hours": "Heures",
         "minutes": "Minutes",
         "seconds": "Secondes"
+      },
+      "notificationOptions": {
+        "1h": "1 heure avant",
+        "1d": "1 jour avant",
+        "launch": "Au lancement"
+      },
+      "subscribeButton": "Créer l'alerte",
+      "subscribing": "Inscription...",
+      "subscribeSuccess": "Vous serez notifié !",
+      "subscribeError": "Une erreur est survenue. Veuillez réessayer.",
+      "alreadySubscribed": "Vous êtes déjà inscrit pour ce lancement.",
+      "addToCalendarTitle": "Ajouter au calendrier",
+      "addToCalendarSubtitle": "Ajoutez cet événement à votre calendrier pour ne pas le manquer.",
+      "calendarEventPrefix": "RECCOS - Lancement de",
+      "calendarSeparator": "ou",
+      "addToGoogleCalendar": "Ajouter à Google Calendar",
+      "downloadICS": "Télécharger .ics",
+      "loginToSubscribe": "Connectez-vous pour recevoir des notifications personnalisées.",
+      "loginButton": "Se connecter",
+      "dynamicAttributes": {
+        "location": "Localisation",
+        "pricePerShare": "Prix par part",
+        "availableAt": "Ouverture",
+        "fallback": "À confirmer"
+      },
+      "loading": "Chargement du prochain drop…",
+      "errors": {
+        "fetchFailed": "Impossible de charger le prochain drop.",
+        "noneUpcoming": "Restez à l'écoute — aucun lancement n'est encore planifié."
+      },
+      "emptyState": {
+        "title": "Bientôt disponible",
+        "subtitle": "Nous préparons quelque chose d'exceptionnel pour vous. Restez connecté.",
+        "hint": "Nouvelles opportunités en préparation"
+      },
+      "nowAvailable": {
+        "badge": "Disponible",
+        "tagline": "Disponible à l'instant",
+        "urgency": "Les premières parts partent vite",
+        "cta": "Investir maintenant"
       }
+    }
+  },
+  "stickyCard": {
+    "viewProperty": "Voir le bien",
+    "discover": "Découvrir l'opportunité",
+    "investors": "personnes ont investi",
+    "investor": "personne a investi",
+    "location": "Localisation",
+    "pricePerShare": "Prix par share",
+    "sharesAvailable": "Shares disponibles",
+    "countdown": {
+      "title": "Disponible dans",
+      "availableOn": "Ouverture le {date}",
+      "ctaLocked": "Bientôt disponible",
+      "days": "J",
+      "hours": "H",
+      "minutes": "Min",
+      "seconds": "Sec"
+    },
+    "loading": "Chargement des opportunités…",
+    "empty": "Restez à l'écoute — les opportunités ouvriront bientôt.",
+    "errors": {
+      "fetchFailed": "Impossible de charger les opportunités disponibles."
+    },
+    "map": {
+      "expand": "Agrandir la carte",
+      "close": "Fermer la carte",
+      "exploreTitle": "Explorez nos propriétés",
+      "property": "propriété",
+      "properties": "propriétés"
+    }
+  },
+  "adminUsers": {
+    "title": "Gestion des comptes & rôles",
+    "subtitle": "Connecté en tant que {email} (superadmin)",
+    "aria": {
+      "table": "Tableau des utilisateurs administrables"
+    },
+    "headers": {
+      "user": "Utilisateur",
+      "role": "Rôle",
+      "status": "Statut",
+      "actions": "Actions"
+    },
+    "filters": {
+      "searchPlaceholder": "Rechercher par email, prénom, nom…",
+      "status": {
+        "all": "Statut : Tous",
+        "active": "Actifs",
+        "inactive": "Inactifs"
+      },
+      "role": {
+        "all": "Rôle : Tous",
+        "client": "Client",
+        "admin": "Admin",
+        "superadmin": "Superadmin"
+      }
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "roles": {
+      "client": "Client",
+      "admin": "Admin",
+      "superadmin": "Superadmin"
+    },
+    "pagination": {
+      "info": "Page {currentPage} / {totalPages} · {total} utilisateurs",
+      "prev": "Précédent",
+      "next": "Suivant"
+    },
+    "empty": {
+      "noUsers": "Aucun utilisateur pour le moment.",
+      "noResults": "Aucun résultat pour cette recherche."
+    },
+    "actions": {
+      "manage": "Gérer"
+    },
+    "modal": {
+      "title": "Gérer l’utilisateur",
+      "accountStatusLabel": "Statut du compte",
+      "statusActiveLabel": "Compte actif",
+      "statusInactiveLabel": "Compte désactivé",
+      "deactivationWarning": "Cette action désactive l’accès de cet utilisateur à la plateforme. Il ne pourra plus se connecter tant que le compte n’est pas réactivé.",
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "saving": "Enregistrement…"
+    },
+    "errors": {
+      "updateUser": "Erreur lors de la mise à jour de l’utilisateur."
+    }
+  },
+  "adminDashboard": {
+    "title": "Pilotage des biens RECCOS",
+    "subtitle": "Connecté en tant que {email}",
+    "meta": {
+      "role": "Rôle : {role}",
+      "propertiesVisible": "{count} biens suivis"
+    },
+    "actions": {
+      "newProperty": "Nouveau bien",
+      "openUsers": "Gestion des comptes"
+    },
+    "stats": {
+      "total": "Biens actifs",
+      "published": "Publiés",
+      "pending": "En attente",
+      "investors": "Investisseurs (vue)",
+      "volume": "Volume suivi"
+    },
+    "filters": {
+      "searchPlaceholder": "Rechercher un bien...",
+      "status": { "all": "Tous les statuts" },
+      "type": { "all": "Tous les types" },
+      "emirate": { "all": "Tous les émirats" },
+      "statusLabel": "Filtrer par statut",
+      "typeLabel": "Filtrer par type",
+      "emirateLabel": "Filtrer par émirat",
+      "reset": "Réinitialiser"
+    },
+    "brands": {
+      "title": "Constructeurs & marques",
+      "subtitle": "Mettez à jour les développeurs disponibles dans le tunnel d’édition.",
+      "loading": "Chargement des marques...",
+      "empty": "Aucun constructeur enregistré.",
+      "list": {
+        "noLogo": "Aucun logo",
+        "actions": {
+          "edit": "Modifier"
+        }
+      },
+      "form": {
+        "createTitle": "Ajouter une marque",
+        "editTitle": "Modifier la marque",
+        "namePlaceholder": "Nom officiel du constructeur",
+        "logoPlaceholder": "URL du logo (PNG, SVG...)",
+        "create": "Ajouter",
+        "update": "Mettre à jour",
+        "saving": "Enregistrement...",
+        "cancel": "Annuler"
+      },
+      "errors": {
+        "fetch": "Impossible de charger les marques.",
+        "save": "Impossible d’enregistrer la marque.",
+        "nameRequired": "Le nom de la marque est requis."
+      },
+      "feedback": {
+        "created": "Marque ajoutée avec succès.",
+        "updated": "Marque mise à jour."
+      }
+    },
+    "table": {
+      "title": "Inventaire immobilier",
+      "columns": {
+        "asset": "Bien",
+        "status": "Statut",
+        "progress": "Avancement",
+        "investors": "Investisseurs",
+        "updated": "Mise à jour",
+        "actions": "Actions"
+      },
+      "location": "{zone}, {emirate}",
+      "investorsCount": "{count} investisseurs",
+      "noInvestors": "Aucun investisseur",
+      "manage": "Gérer"
+    },
+    "pagination": {
+      "info": "Page {page} / {totalPages} · {total} biens",
+      "short": "{start}–{end} / {total}",
+      "prev": "Précédent",
+      "next": "Suivant"
+    },
+    "detail": {
+      "location": "{zone}, {emirate}",
+      "viewProduct": "Voir la fiche",
+      "pricePerShare": "Prix / token",
+      "totalShares": "Nombre de tokens",
+      "totalValue": "Valeur totale",
+      "investorsTitle": "Investisseurs associés",
+      "noInvestors": "Aucun investisseur enregistré pour ce bien.",
+      "shares": "{count} parts",
+      "actions": {
+        "edit": "Modifier",
+        "publish": "Publier",
+        "reject": "Rejeter",
+        "delete": "Supprimer"
+      }
+    },
+    "modals": {
+      "createTitle": "Nouveau bien",
+      "editTitle": "Mettre à jour le bien",
+      "createSubtitle": "Enregistrez un actif afin que l’équipe puisse le publier.",
+      "editSubtitle": "Actualisez les informations visibles par les investisseurs.",
+      "fields": {
+        "title": "Titre",
+        "zone": "Quartier / zone",
+        "description": "Description",
+        "propertyType": "Type de bien",
+        "emirate": "Émirat",
+        "address": "Adresse",
+        "pricePerShare": "Prix par token (AED)",
+        "totalShares": "Nombre total de tokens",
+        "totalArea": "Surface totale (sqft)",
+        "bedrooms": "Chambres",
+        "bathrooms": "Salles de bain",
+        "mainImage": "Image principale (URL)",
+        "gallery": "Galerie (1 URL par ligne)",
+        "features": "Atouts (séparés par des virgules)",
+        "listingType": "Type d’annonce",
+        "investors": "Investisseurs (1 par ligne)",
+        "status": "Statut initial",
+        "developerId": "ID développeur (optionnel)"
+      },
+      "placeholders": {
+        "investors": "Nom | email | parts"
+      },
+      "errors": {
+        "required": "Veuillez remplir les champs obligatoires.",
+        "number": "Merci de saisir des valeurs numériques valides.",
+        "unknown": "Impossible d’enregistrer ce bien."
+      },
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "saving": "Enregistrement..."
+    },
+    "workflow": {
+      "publishTitle": "Publier le bien",
+      "rejectTitle": "Rejeter le bien",
+      "deleteTitle": "Supprimer le bien",
+      "publishDescription": "Confirmez la publication de « {title} » sur la plateforme.",
+      "rejectDescription": "Expliquez pourquoi « {title} » est rejeté.",
+      "deleteDescription": "Cette action retire définitivement « {title} ».",
+      "notes": "Notes internes",
+      "notesPlaceholder": "Informations complémentaires pour l'équipe.",
+      "reason": "Raison du rejet",
+      "reasonPlaceholder": "Ex. dossier incomplet, visuels manquants...",
+      "cancel": "Retour",
+      "confirm": "Confirmer",
+      "confirming": "Traitement...",
+      "deleteWarning": "Cette action est irréversible. L'annonce sera définitivement supprimée.",
+      "deleteWarningSubtext": "Êtes-vous sûr de vouloir continuer ?",
+      "deleteConfirm": "Oui, supprimer définitivement"
+    },
+    "errors": {
+      "fetch": "Impossible de charger les biens.",
+      "action": "Action impossible sur ce bien."
+    },
+    "loading": "Chargement des biens...",
+    "empty": "Aucun bien ne correspond à vos filtres.",
+    "statuses": {
+      "draft": "Brouillon",
+      "pending": "En attente",
+      "upcoming": "À venir",
+      "published": "Publié",
+      "sold": "Vendu",
+      "rejected": "Rejeté",
+      "archived": "Archivé",
+      "upcomingTooltip": "Lancement prévu le {date}"
+    },
+    "propertyTypes": {
+      "apartment": "Appartement",
+      "villa": "Villa",
+      "townhouse": "Maison de ville",
+      "penthouse": "Penthouse",
+      "studio": "Studio",
+      "land": "Terrain",
+      "commercial": "Commercial"
+    },
+    "emirates": {
+      "dubai": "Dubaï",
+      "abu_dhabi": "Abou Dabi",
+      "sharjah": "Sharjah",
+      "ajman": "Ajman",
+      "umm_al_quwain": "Umm Al Qaiwain",
+      "ras_al_khaimah": "Ras Al Khaimah",
+      "fujairah": "Fujaïrah"
+    }
+  },
+  "adminPropertyTunnel": {
+    "title": "Nouvelle opportunité RECCOS",
+    "titleEdit": "Modifier l’opportunité",
+    "subtitle": "Renseigne chaque étape pour créer un dossier complet avant publication.",
+    "subtitleEdit": "Tu peux mettre à jour les informations avant de republier.",
+    "steps": {
+      "identity": "Identité",
+      "financials": "Financier",
+      "media": "Médias",
+      "developer": "Constructeur",
+      "status": "Publication"
+    },
+    "sections": {
+      "identity": "Identité & localisation",
+      "identitySubtitle": "Nom du bien, zone et description générale.",
+      "financials": "Paramètres financiers",
+      "lifestyleFeatures": "Features Lifestyle",
+      "lifestyleFeaturesSubtitle": "Ajoute les équipements et services premium qui font la différence.",
+      "media": "Galerie & visuels",
+      "developer": "Constructeur / Developer",
+      "developerSubtitle": "Sélectionnez une marque existante ou créez-en une nouvelle.",
+      "investors": "Investisseurs (optionnel)",
+      "investorsSubtitle": "Format : Nom | email | parts",
+      "status": "Statut de publication",
+      "statusHint": "Le statut passera automatiquement en brouillon à la création."
+    },
+    "fields": {
+      "title": "Titre",
+      "zone": "Quartier / zone",
+      "description": "Description",
+      "propertyType": "Type de bien",
+      "emirate": "Émirat",
+      "address": "Adresse",
+      "latitude": "Latitude (ex: 25.2048)",
+      "longitude": "Longitude (ex: 55.2708)",
+      "latitudeHint": "Format décimal entre -90 et 90.",
+      "longitudeHint": "Format décimal entre -180 et 180.",
+      "pricePerShare": "Prix par token (AED)",
+      "totalShares": "Nombre total de tokens",
+      "totalArea": "Surface totale (sqft)",
+      "bedrooms": "Chambres",
+      "bathrooms": "Salles de bain",
+      "listingType": "Type d’annonce",
+      "availableAt": "Ouverture des ventes (date & heure)",
+      "availableAtHint": "L’annonce reste visible mais affiche un compte à rebours avant cette date. Laisse vide pour une disponibilité immédiate.",
+      "mainImage": "Image principale",
+      "galleryUrls": "Galerie (URLs)",
+      "galleryFiles": "Galerie (fichiers locaux)",
+      "features": "Atouts (séparés par des virgules)",
+      "developerBrand": "Marque / constructeur",
+      "developerBrandPlaceholder": "Choisissez une marque",
+      "newDeveloperName": "Nom de la marque",
+      "developerLogoUrl": "Logo (URL)",
+      "developerLogoFile": "Logo (upload)",
+      "developerId": "ID développeur (optionnel)",
+      "investors": "Investisseurs",
+      "status": "Statut",
+      "galleryFilesLabel": "Importer des images",
+      "featureTitle": "Titre de la feature (ex: Swimming Pool)",
+      "featureDescription": "Description détaillée de la feature"
+    },
+    "uploads": {
+      "galleryHint": "Ajoute des URLs ou glisse tes fichiers locaux (JPG/PNG).",
+      "galleryDrop": "Sélectionner des images…",
+      "add": "Ajouter",
+      "urlHint": "Colle une URL valide puis appuie sur Entrée ou sur Ajouter.",
+      "multipleHint": "Plusieurs fichiers autorisés",
+      "logoHint": "Ajoute le logo officiel du developer (PNG fond transparent recommandé).",
+      "setAsMain": "Définir comme image principale",
+      "mainImage": "PRINCIPALE",
+      "remove": "Retirer"
+    },
+    "actions": {
+      "back": "Retour",
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "saving": "Enregistrement…",
+      "addFeature": "Ajouter une feature",
+      "removeFeature": "Retirer cette feature",
+      "addDeveloper": "Ajouter un constructeur",
+      "cancelAddDeveloper": "Annuler",
+      "createDeveloper": "Enregistrer le constructeur"
+    },
+    "messages": {
+      "required": "Merci de renseigner le titre et la description.",
+      "numberError": "Prix, parts et surface doivent être des valeurs numériques.",
+      "invalidUrl": "Merci de renseigner une URL valide commençant par https://",
+      "dateError": "Merci de renseigner une date d’ouverture valide (format AAAA-MM-JJ HH:MM).",
+      "success": "Le bien a été enregistré.",
+      "error": "Impossible d’enregistrer le bien.",
+      "loading": "Chargement du bien…",
+      "brandLoadError": "Impossible de charger la liste des constructeurs.",
+      "brandCreateError": "Impossible de créer ce constructeur.",
+      "brandNameRequired": "Merci de renseigner un nom de constructeur.",
+      "brandRequired": "Sélectionnez un constructeur avant d’enregistrer.",
+      "noDevelopers": "Aucun constructeur pour le moment. Créez-en un pour continuer.",
+      "legacyDeveloperNotice": "Données héritées détectées ({name}). Créez un constructeur pour les réutiliser.",
+      "coordinatesRequired": "Merci de renseigner la latitude et la longitude du bien.",
+      "coordinatesInvalid": "Latitude/longitude invalides. Utilisez des valeurs décimales comprises entre -90/90 et -180/180."
+    },
+    "placeholders": {
+      "investors": "Nom | email | parts"
+    },
+    "propertyTypes": {
+      "apartment": "Appartement",
+      "villa": "Villa",
+      "townhouse": "Maison de ville",
+      "penthouse": "Penthouse",
+      "studio": "Studio",
+      "land": "Terrain",
+      "commercial": "Commercial"
+    },
+    "emirates": {
+      "dubai": "Dubaï",
+      "abu_dhabi": "Abou Dabi",
+      "sharjah": "Sharjah",
+      "ajman": "Ajman",
+      "umm_al_quwain": "Umm Al Qaiwain",
+      "ras_al_khaimah": "Ras Al Khaimah",
+      "fujairah": "Fujaïrah"
+    },
+    "statuses": {
+      "draft": "Brouillon",
+      "pending": "En attente",
+      "published": "Publié",
+      "sold": "Vendu",
+      "rejected": "Rejeté",
+      "archived": "Archivé"
     }
   },
   "common": {
@@ -204,6 +692,299 @@
     "delete": "Supprimer",
     "edit": "Modifier",
     "back": "Retour"
+  },
+  "product": {
+    "currentlyOpen": "actuellement ouvert",
+    "description": "DESCRIPTION",
+    "buildedBy": "Construit par",
+    "unknownDeveloper": "Développeur à confirmer",
+    "viewOnMap": "Voir sur la carte",
+    "readMore": "En savoir plus",
+    "readLess": "Voir moins",
+    "perShare": "par part",
+    "shares": "parts",
+    "bedroom": "chambre",
+    "bedrooms": "chambres",
+    "bathroom": "salle de bain",
+    "bathrooms": "salles de bain",
+    "featuresAndLifestyle": "Caractéristiques & Style de vie",
+    "discover": "découvrir",
+    "whyReccosChose": "Pourquoi Reccos a choisi ce bien pour vous...",
+    "recommendation": {
+      "next": "Étape suivante",
+      "developerPrefix": "Proposé par {name}",
+      "developerLabel": "Promoteur",
+      "showcaseTitle": "Projets livrés",
+      "panelSubtitle": "Brochures officielles, preuves sociales et projets livrés.",
+      "showcaseLead": "Nous mettons en avant les gages de sérieux du promoteur ainsi que ses livraisons emblématiques.",
+      "backToKpis": "← Retour",
+      "documentsTitle": "Documents officiels",
+      "documentsLead": "Brochures, plans financiers et garanties légales à télécharger.",
+      "documentsEmpty": "Aucun document disponible pour le moment.",
+      "download": "Télécharger",
+      "documentsCta": "Voir la brochure",
+      "showcaseEmpty": "Les projets livrés seront bientôt ajoutés.",
+      "projectsDelivered": "Projets livrés",
+      "satisfactionRate": "Satisfaction",
+      "since": "Depuis",
+      "readyToInvest": "Prêt à investir dans ce projet ?",
+      "ctaInvest": "Investir maintenant",
+      "paymentTitle": "Finaliser votre investissement",
+      "paymentSubtitle": "Sélectionnez vos parts puis accédez au paiement sécurisé.",
+      "paymentLead": "Nous réservons vos parts immédiatement après validation du paiement.",
+      "backToShowcase": "Retour aux preuves",
+      "sharesLabel": "Nombre de parts",
+      "shareDecrease": "Réduire le nombre de parts",
+      "shareIncrease": "Augmenter le nombre de parts",
+      "availableShares": "{count} parts disponibles",
+      "amountLabel": "Montant estimé",
+      "paymentCta": "Procéder au paiement",
+      "paymentSecure": "Paiement protégé 3D Secure — vos fonds sont cantonnés jusqu’à la signature.",
+      "kpisEyebrow": "Analyse Reccos",
+      "kpisTitle": "Ce bien correspond à votre stratégie",
+      "kpisSubtitle": "Nous sélectionnons les indicateurs clés à surveiller.",
+      "kpisHint": "Glisse vers la droite pour consulter les preuves promoteur puis accéder au paiement.",
+      "stepFinal": "Étape finale",
+      "checkoutTitle": "Sécurisez votre allocation",
+      "checkoutSubtitle": "Choisissez le nombre de parts et validez votre investissement en toute sérénité.",
+      "successTitle": "Investissement confirmé ! 🎉",
+      "successSubtitle": "Votre investissement a été traité avec succès. Un email de confirmation vous a été envoyé.",
+      "sharesPurchased": "Parts achetées",
+      "totalInvested": "Total investi",
+      "titleDeedNotice": "Votre titre de propriété vous sera envoyé par email sous 24 heures.",
+      "transactionId": "ID Transaction",
+      "done": "Terminé"
+    },
+    "checkout": {
+      "shareSelection": "Sélection de parts",
+      "useMax": "Utiliser le max",
+      "decreaseShares": "Réduire le nombre de parts",
+      "increaseShares": "Augmenter le nombre de parts",
+      "sharesExceeded": "Parts disponibles dépassées",
+      "inputHint": "Tu peux saisir un nombre ou utiliser les contrôles pour rester sur une valeur arrondie.",
+      "totalInvested": "Total investi",
+      "sharesSelected": "{count, plural, =0 {Aucune part sélectionnée} one {# part sélectionnée} other {# parts sélectionnées}}",
+      "sharesAvailable": "{count, plural, =0 {Aucune part disponible} one {# part disponible} other {# parts disponibles}}",
+      "sharesLimitExceeded": "{count, plural, one {Limite dépassée de # part} other {Limite dépassée de # parts}}",
+      "payment": "Paiement",
+      "processing": "Traitement...",
+      "paymentHint": "Choisis tes parts et investis en toute sécurité.",
+      "perShare": "{price} {currency}/part"
+    }
+  },
+  "kpis": {
+    "currentValue": "VALEUR ACTUELLE",
+    "pricePerSqm": "PRIX AU M²",
+    "appreciation": "APPRÉCIATION",
+    "reputation": "RÉPUTATION",
+    "volatility": "VOLATILITÉ",
+    "demand": "DEMANDE",
+    "premium": "↑ Premium",
+    "market": "↓ Marché",
+    "currency": "AED/m²",
+    "avg": "Moy.",
+    "months12": "12 mois",
+    "months6": "6 mois",
+    "forecast12m": "Prévision sur 12 mois",
+    "tier": "Tier {tier}",
+    "avgScore": "Score moyen",
+    "priceDispersion": "Dispersion prix",
+    "confidence": {
+      "veryHigh": "Très élevée",
+      "high": "Élevée",
+      "moderate": "Modérée",
+      "low": "Faible"
+    },
+    "volatilityLevels": {
+      "low": "Faible",
+      "moderate": "Modéré",
+      "high": "Élevé"
+    },
+    "demandLevels": {
+      "low": "Faible",
+      "lowDesc": "Peu de demande",
+      "moderate": "Modérée",
+      "moderateDesc": "Demande stable",
+      "high": "Forte",
+      "highDesc": "Forte demande",
+      "veryHigh": "Très forte",
+      "veryHighDesc": "Marché tendu"
+    },
+    "criteria": {
+      "quality": "Qualité",
+      "deadlines": "Délais",
+      "service": "Service",
+      "price": "Prix"
+    }
+  },
+  "footer": {
+    "newsletter": {
+      "title": "Restez informé avec RECCOS",
+      "description": "Recevez les dernières actualités, lancements exclusifs et analyses du marché immobilier de Dubaï.",
+      "placeholder": "Entrez votre email"
+    },
+    "navigation": {
+      "title": "Explorer"
+    },
+    "legal": {
+      "title": "Légal",
+      "terms": "Conditions d'utilisation",
+      "privacy": "Politique de confidentialité",
+      "cookies": "Politique des cookies",
+      "legalNotice": "Mentions légales"
+    },
+    "contact": {
+      "title": "Contact",
+      "address": "Dubaï, Émirats Arabes Unis",
+      "rera": "Licence RERA #12345"
+    },
+    "copyright": {
+      "allRights": "Tous droits réservés."
+    }
+  },
+  "launchpad": {
+    "filters": {
+      "currentlyOpen": "Actuellement ouvert",
+      "alreadyBought": "Déjà acheté",
+      "discoverExperience": "Découvrez l'expérience Reccos",
+      "filterByStatus": "Filtrer par statut",
+      "sortBy": "Trier par",
+      "statusOptions": {
+        "all": "Tous",
+        "open": "Ouvert",
+        "closed": "Fermé",
+        "upcoming": "À venir"
+      },
+      "sortOptions": {
+        "newest": "Plus récent",
+        "oldest": "Plus ancien",
+        "priceAsc": "Prix : croissant",
+        "priceDesc": "Prix : décroissant"
+      }
+    }
+  },
+  "projectsGallery": {
+    "learnMore": "En savoir plus",
+    "more": "plus",
+    "less": "moins",
+    "items": {
+      "globalHub": {
+        "title": "Un carrefour mondial entre l'Europe, l'Asie et l'Afrique",
+        "subtitle": "L'avantage géographique",
+        "description": "Les EAU se situent à l'un des carrefours les plus stratégiques au monde, reliant l'Europe, l'Asie et l'Afrique en quelques heures de vol. Cette position fait du pays un hub mondial de logistique, d'aviation et d'affaires, générant une demande continue pour le logement, les bureaux et les actifs hôteliers. Pour les investisseurs, cet avantage géographique se traduit par une meilleure liquidité, des taux d'occupation plus élevés et une résilience à long terme.",
+        "link": "https://u.ae/en/about-the-uae/geography-and-climate/geographical-importance-of-the-uae"
+      },
+      "diversifying": {
+        "title": "Diversifier au-delà de l'Europe",
+        "subtitle": "Pourquoi les EAU équilibrent un portefeuille",
+        "description": "Les EAU offrent une puissante voie de diversification pour les investisseurs cherchant une croissance en dehors des marchés européens matures. Avec une démographie solide, une expansion rapide des infrastructures et un environnement favorable à l'investissement, ils offrent une exposition à une économie encore en pleine accélération. Ce repositionnement réduit le risque de concentration et positionne les investisseurs sur un marché à forte croissance, ancré au dollar.",
+        "link": "https://u.ae/en/about-the-uae/economy/economic-diversification-in-the-uae"
+      },
+      "masterPlan": {
+        "title": "Plan directeur urbain de Dubaï 2040",
+        "subtitle": "Une ville construite pour l'avenir",
+        "description": "Le Plan directeur urbain de Dubaï 2040 est une feuille de route sur 20 ans conçue pour transformer Dubaï en l'une des villes les plus agréables à vivre, modernes et tournées vers l'avenir. Il prévoit de doubler les espaces verts, d'étendre massivement les plages et les espaces publics, de développer un réseau de transports publics étendu et de structurer cinq grands pôles urbains pour accueillir une population croissante — le tout dans une vision durable et hautement investissable. Cette planification crée un contexte d'investissement urbain à long terme : nouvelles infrastructures, besoins accrus en logement, hausse prévisible de la valeur foncière et opportunités pour des projets mixed-use.",
+        "link": "https://u.ae/en/about-the-uae/strategies-initiatives-and-awards/strategies-plans-and-visions/transport-and-infrastructure/dubai-2040-urban-master-plan"
+      },
+      "fractional": {
+        "title": "Investissement immobilier fractionné",
+        "subtitle": "Ouvrir l'accès aux actifs premium des EAU",
+        "description": "La propriété fractionnée permet aux investisseurs d'accéder à des biens de grande valeur avec un ticket d'entrée nettement plus bas, tout en bénéficiant des rendements locatifs et de l'appréciation du capital. Ce modèle démocratise l'accès à l'immobilier premium et s'aligne sur les tendances mondiales vers un investissement immobilier liquide et technologique. Il offre également une diversification sur plusieurs actifs plutôt que de concentrer le capital sur une seule unité.",
+        "link": "https://u.ae/en/information-and-services/finance-and-investment/real-estate/real-estate-regulations-and-laws-in-the-uae"
+      },
+      "freehold": {
+        "title": "Propriété en pleine propriété aux EAU",
+        "subtitle": "Ce que les investisseurs internationaux doivent savoir",
+        "description": "Les EAU permettent aux étrangers d'acheter des biens en pleine propriété dans des zones désignées, accordant une propriété complète, des droits de revente et une sécurité successorale. Ce cadre a ouvert l'accès à certains des quartiers les plus dynamiques du pays et à des développements premium. La législation sur la pleine propriété reste un catalyseur majeur pour l'investissement étranger et la confiance à long terme dans le marché.",
+        "link": "https://u.ae/en/information-and-services/finance-and-investment/real-estate/freehold-areas-for-non-citizens-in-dubai"
+      },
+      "goldenVisa": {
+        "title": "Golden Visa et résidence",
+        "subtitle": "Investir pour s'ancrer aux EAU",
+        "description": "Les EAU offrent des parcours de résidence à long terme pour les investisseurs, entrepreneurs et personnes hautement qualifiées via leur programme Golden Visa. Ce cadre fournit une résidence renouvelable de 10 ans, la liberté de vivre, travailler et investir, et un horizon stable à long terme pour les familles et les actifs. En liant l'investissement à la sécurité de résidence, les EAU renforcent la confiance des investisseurs et soutiennent des flux de capitaux durables.",
+        "link": "https://u.ae/en/information-and-services/visa-and-emirates-id/golden-visa/long-term-residence-visas"
+      },
+      "tourism": {
+        "title": "Tourisme haut de gamme",
+        "subtitle": "Un moteur puissant pour les rendements immobiliers",
+        "description": "Les EAU attirent des dizaines de millions de visiteurs chaque année, se positionnant comme une puissance mondiale du tourisme de luxe. Ce flux constant alimente une forte demande pour les locations de vacances, les appartements avec services et les investissements liés à l'hôtellerie. Avec des attractions de classe mondiale et un tourisme toute l'année, les rendements locatifs à court terme restent parmi les plus forts de la région.",
+        "link": "https://u.ae/en/information-and-services/visiting-and-exploring-the-uae/tourism-in-the-uae"
+      },
+      "dirhams": {
+        "title": "Investir en Dirhams",
+        "subtitle": "Devise forte, exposition mondiale équilibrée",
+        "description": "Le dirham des EAU (AED) est l'une des devises les plus stables au monde, fermement indexée sur le dollar américain depuis 1997. Cette stabilité protège les investisseurs de la volatilité majeure des changes tout en offrant une exposition à une économie en croissance rapide et connectée mondialement. Pour les investisseurs internationaux, les actifs libellés en AED offrent à la fois sécurité et diversification dans un cadre ancré au dollar.",
+        "link": "https://u.ae/en/information-and-services/finance-and-investment/money-and-exchange/currency-in-the-uae"
+      },
+      "legalFramework": {
+        "title": "Cadre juridique et transparence",
+        "subtitle": "Comprendre RERA et les régulateurs",
+        "description": "Les EAU ont construit l'un des environnements immobiliers les plus transparents et protecteurs pour les investisseurs de la région, dirigé par des régulateurs comme RERA. Des lois claires, des protections par séquestre et une surveillance stricte des promoteurs garantissent des transactions plus sûres et une confiance durable dans le marché. Ce cadre réglementaire robuste est un pilier clé attirant les investisseurs mondiaux en quête de stabilité et de transparence.",
+        "link": "https://u.ae/en/information-and-services/finance-and-investment/real-estate/real-estate-regulations-and-laws-in-the-uae"
+      },
+      "offPlan": {
+        "title": "Immobilier sur plan",
+        "subtitle": "Opportunités, risques et meilleures pratiques",
+        "description": "L'immobilier sur plan reste l'un des segments d'investissement les plus dynamiques des EAU, offrant des prix d'entrée accessibles et un fort potentiel d'appréciation du capital. Avec des paiements échelonnés et un accès anticipé aux quartiers émergents, les investisseurs peuvent capturer de la valeur avant la livraison. Comprendre la réputation du promoteur, les réglementations de séquestre et les délais de projet est essentiel pour sécuriser des opportunités sûres et à haut rendement.",
+        "link": "https://u.ae/en/information-and-services/finance-and-investment/real-estate/real-estate-regulations-and-laws-in-the-uae"
+      },
+      "population": {
+        "title": "Croissance démographique",
+        "subtitle": "Une demande locative en expansion constante",
+        "description": "La population des EAU croît rapidement, portée par les flux mondiaux de talents, l'expansion des entreprises et les stratégies gouvernementales pour attirer des résidents qualifiés. Cet élan démographique alimente une demande continue pour les locations, les séjours de courte durée et les nouveaux développements résidentiels. Pour les investisseurs, cela crée une base d'occupation stable à long terme et un fort potentiel tant pour le rendement que pour l'appréciation.",
+        "link": "https://u.ae/en/about-the-uae/strategies-initiatives-and-awards/strategies-plans-and-visions/we-the-uae-2031"
+      },
+      "security": {
+        "title": "Sécurité, stabilité et visibilité",
+        "subtitle": "Le trio gagnant des EAU",
+        "description": "Les EAU se distinguent par leur stabilité politique exceptionnelle, leurs taux de criminalité ultra-bas et leur planification nationale à long terme, créant un environnement unique de prévisibilité. Les investisseurs bénéficient d'un pays construit sur la sécurité, la transparence et la continuité — des forces rares dans le paysage mondial actuel. Cette combinaison de stabilité et de vision d'avenir fait des EAU l'une des destinations les plus sûres pour la préservation et la croissance du capital.",
+        "link": "https://u.ae/en/about-the-uae/uae-government/political-system-and-government-system"
+      },
+      "globalCapital": {
+        "title": "Les EAU, un aimant pour le capital mondial ?",
+        "subtitle": "Un véritable hub d'investissement",
+        "description": "Les EAU ont évolué pour devenir un véritable aimant à capitaux mondiaux, portés par une stabilité politique inégalée et un modèle économique pro-investisseur. Avec 0% d'impôt sur le revenu des personnes physiques et une propriété étrangère complète dans les secteurs clés, le pays offre l'un des environnements d'investissement les plus attractifs au monde. Ses infrastructures de classe mondiale, sa population en croissance rapide et ses visions nationales à long terme créent une demande soutenue et une valeur durable.",
+        "link": "https://u.ae/en/information-and-services/business/the-uae-an-ideal-investment-destination"
+      },
+      "taxAdvantages": {
+        "title": "Avantages fiscaux",
+        "subtitle": "Comprendre le cadre fiscal des EAU",
+        "description": "Les EAU offrent l'un des environnements fiscaux les plus attractifs au monde, avec 0% d'impôt sur le revenu des personnes physiques, pas d'impôt sur les plus-values pour les particuliers et un rapatriement complet des bénéfices. L'impôt sur les sociétés reste bas et stratégiquement conçu pour maintenir la compétitivité du pays tout en soutenant les entreprises mondiales. Ce cadre prévisible, stable et favorable aux investisseurs est un moteur majeur des flux d'investissement à long terme vers les Émirats.",
+        "link": "https://u.ae/en/information-and-services/finance-and-investment/taxation/taxation-in-the-uae"
+      }
+    }
+  },
+  "noor": {
+    "sidebar": {
+      "title": "Historique",
+      "actions": {
+        "new": "Nouvelle conversation",
+        "searchPlaceholder": "Rechercher une conversation"
+      },
+      "state": {
+        "loading": "Chargement...",
+        "emptyTitle": "Aucune conversation",
+        "emptySubtitle": "Commencez à discuter avec Noor"
+      },
+      "collapsed": {
+        "openSidebar": "Déplier la barre latérale",
+        "collapseSidebar": "Réduire la barre latérale",
+        "newChat": "Nouvelle conversation",
+        "search": "Rechercher"
+      },
+      "footer": "Noor IA"
+    },
+    "chat": {
+      "inputPlaceholder": "Demandez à Noor...",
+      "thinking": "Réflexion...",
+      "introSubtitle": "Votre assistante personnelle pour l'investissement immobilier à Dubaï",
+      "introHint": "Posez une question pour commencer",
+      "errors": {
+        "unauthorized": "Veuillez vous connecter pour discuter avec Noor.",
+        "unavailable": "Le service IA est temporairement indisponible. Veuillez réessayer.",
+        "generic": "Une erreur est survenue. Veuillez réessayer."
+      }
+    }
   }
 }
 
