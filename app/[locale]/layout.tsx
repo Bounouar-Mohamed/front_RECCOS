@@ -256,7 +256,7 @@ export default async function LocaleLayout({
               <ToastProvider>
                 <AuthHydrator />
                 <PreloaderWrapper />
-                <DebugScroll />
+
                 <div id="app-content" className="h-full">
                   <header className={headerStyles.container}>
                     <Navbar />

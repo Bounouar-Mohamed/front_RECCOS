@@ -436,7 +436,7 @@ function UserActionsModal({
             </span>
             <Select
               value={role}
-              onChange={(e) => setRole(e.target.value)}
+              onChange={(e) => setRole(e.target.value as 'CLIENT' | 'AGENT' | 'ADMIN' | 'admin' | 'superadmin')}
               options={[
                 { value: 'client', label: tAdmin('roles.client') },
                 { value: 'admin', label: tAdmin('roles.admin') },

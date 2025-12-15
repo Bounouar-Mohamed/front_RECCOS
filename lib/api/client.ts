@@ -72,8 +72,8 @@ export const apiClient: AxiosInstance = axios.create({
     'Content-Type': 'application/json',
   },
   timeout: 30000,
-  // Important : s'assurer que les requêtes sont faites depuis le client
-  withCredentials: false,
+  // IMPORTANT: withCredentials: true pour que les cookies soient envoyés et reçus
+  withCredentials: true,
 });
 
 const refreshClient = axios.create({
@@ -81,6 +81,7 @@ const refreshClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
 let isRefreshing = false;

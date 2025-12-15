@@ -43,7 +43,10 @@ export const Navbar = () => {
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isAuthenticated, isLoading, checkAuth, logout } = useAuthStore();
+  
+  // État d'authentification simplifié
+  // La vérification se fait via /api/auth/me au chargement
+  const { user, isAuthenticated, isLoading, logout } = useAuthStore();
 
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -52,9 +55,8 @@ export const Navbar = () => {
   const [isNavHidden, setIsNavHidden] = useState(false);
   const lastScrollYRef = useRef(0);
 
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+  // NOTE: checkAuth() est maintenant appelé par AuthProvider au niveau de l'app
+  // Plus besoin de l'appeler ici - cela évite les appels multiples
 
   // Mesurer la hauteur réelle de la navbar pour calculer la hauteur fermée
   useEffect(() => {
@@ -134,36 +136,58 @@ export const Navbar = () => {
 
   useOnClickOutside(menuRef, closeMenu);
 
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
   const handleLogout = useCallback(async () => {
-    await logout();
-    router.push(`/${locale}`);
+    if (isLoggingOut) return;
+    
+    setIsLoggingOut(true);
     closeMenu();
-  }, [closeMenu, locale, logout, router]);
+    
+    try {
+      await logout();
+      // Utiliser window.location.href pour une navigation complète
+      // Cela garantit que le middleware vérifie les cookies correctement
+      window.location.href = `/${locale}`;
+    } catch (error) {
+      console.error('[Navbar] Logout error:', error);
+      // En cas d'erreur, rediriger quand même
+      window.location.href = `/${locale}`;
+    }
+  }, [closeMenu, locale, logout, isLoggingOut]);
 
   const role = user?.role;
   const isAdmin = role === 'admin' || role === 'superadmin';
   const isSuperAdmin = role === 'superadmin';
+  
+  // SÉCURITÉ: Vérification avant d'afficher les liens sensibles
+  // isLoading === false && isAuthenticated === true signifie que /api/auth/me a confirmé la session
+  const isVerifiedAuthenticated = !isLoading && isAuthenticated;
 
   const baseLinks = useMemo(
-    () => (isAuthenticated ? authenticatedLinks : publicLinks),
-    [isAuthenticated],
+    () => (isVerifiedAuthenticated ? authenticatedLinks : publicLinks),
+    [isVerifiedAuthenticated],
   );
 
   const adminLinks = useMemo(() => {
     const items: { key: string; href: string }[] = [];
 
+    // SÉCURITÉ BIG APP: Les liens admin nécessitent une vérification SERVEUR
+    // On utilise isVerifiedAuthenticated (= vérifié par /api/auth/me) pour les zones sensibles
+    // Cela empêche d'afficher les liens admin même si le localStorage est compromis
+
     // Espace admin (gestion propriétés / promoteurs / performances)
-    if (isAuthenticated && isAdmin) {
+    if (isVerifiedAuthenticated && isAdmin) {
       items.push({ key: 'admin', href: '/admin' });
     }
 
     // Espace gestion des comptes & rôles (superadmin uniquement)
-    if (isAuthenticated && isSuperAdmin) {
+    if (isVerifiedAuthenticated && isSuperAdmin) {
       items.push({ key: 'adminUsers', href: '/admin/users' });
     }
 
     return items;
-  }, [isAuthenticated, isAdmin, isSuperAdmin]);
+  }, [isVerifiedAuthenticated, isAdmin, isSuperAdmin]);
 
   const localePathSuffix = useMemo(() => {
     if (!pathname) {
@@ -274,7 +298,7 @@ export const Navbar = () => {
             })}
 
             {/* Séparateur ultra épuré pour les sections sensibles (admin) */}
-            {isAuthenticated && adminLinks.length > 0 && (
+            {isVerifiedAuthenticated && adminLinks.length > 0 && (
               <li className={navbarStyles.adminDivider} aria-hidden="true">
                 <span className={navbarStyles.adminDividerLine} />
                 <span className={navbarStyles.adminDividerLabel}>
@@ -346,8 +370,9 @@ export const Navbar = () => {
                   type="button"
                   onClick={handleLogout}
                   className={navbarStyles.logoutButton}
+                  disabled={isLoggingOut}
                 >
-                  {t('links.logout')}
+                  {isLoggingOut ? '...' : t('links.logout')}
                 </button>
               ))}
           </div>
