@@ -140,14 +140,25 @@ function extractProperties(content: string): { properties: PropertyData[]; clean
   let cleanContent = content;
   
   // ============================================
-  // GARDE STRICT : Ne parser les propriétés QUE si c'est une liste explicite
-  // On cherche le marqueur du template backend
+  // GARDE FLEXIBLE : analyser les listes explicites mais tolérer
+  // les formulations courantes ("Voici ce qui est dispo", etc.)
   // ============================================
-  const isPropertyListResponse = 
-    content.includes('Voici les propriétés disponibles') ||
-    content.includes('Voici ce qui est disponible') ||
-    content.includes('propriétés disponibles ✨') ||
-    /^━+$/m.test(content); // Format avec séparateurs
+  const normalizedHeader = content.toLowerCase();
+  const propertyTriggers = [
+    'voici les propriétés disponibles',
+    'voici ce qui est disponible',
+    'voici ce qui est dispo',
+    'voici les biens disponibles',
+    'voici les opportunités disponibles',
+    'voici ce que je peux te montrer',
+    'voici ce qui est dispo en ce moment',
+    'discover the properties',
+    'available properties',
+    'here are the properties',
+    'here is what i can show you',
+  ];
+  const hasTrigger = propertyTriggers.some((trigger) => normalizedHeader.includes(trigger));
+  const isPropertyListResponse = hasTrigger || /^━+$/m.test(content); // Format avec séparateurs
   
   // Si ce n'est PAS une liste de propriétés, on ne parse pas
   if (!isPropertyListResponse) {
