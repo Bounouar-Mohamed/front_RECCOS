@@ -135,6 +135,15 @@ function useCountdown(targetDate: string | undefined) {
 }
 
 // === PARSERS ===
+function sanitizeTitleText(rawTitle: string): string {
+  return rawTitle
+    .replace(/^#+\s*/, '')
+    .replace(/\*\*/g, '')
+    .replace(/(✅|⏳).*/g, '')
+    .replace(/\b(AVAILABLE|SOON|DISPONIBLE|Bient[oô]t).*/i, '')
+    .trim();
+}
+
 function extractProperties(content: string): { properties: PropertyData[]; cleanContent: string } {
   const properties: PropertyData[] = [];
   let cleanContent = content;
@@ -168,6 +177,7 @@ function extractProperties(content: string): { properties: PropertyData[]; clean
       .replace(/^🏠.*$/gm, '')
       .replace(/^DISCOVER$/gm, '')
       .replace(/^\d[\d,.\s]*AED\s*$/gm, '')
+      .replace(/^#+\s*/gm, '')
       .replace(/\n{3,}/g, '\n\n')
       .trim();
     
@@ -270,7 +280,7 @@ function extractProperties(content: string): { properties: PropertyData[]; clean
         }
         
         // Commencer une nouvelle propriété
-        currentTitle = line.replace(/^\d+\.\s*/, '').replace(/\*\*/g, '').trim();
+        currentTitle = sanitizeTitleText(line.replace(/^\d+\.\s*/, '').replace(/\*\*/g, '').trim());
         currentDetails = [];
         emptyLineCount = 0;
       }
@@ -324,6 +334,11 @@ function extractProperties(content: string): { properties: PropertyData[]; clean
       .join('\n')
       .replace(/\n{3,}/g, '\n\n')
       .trim();
+    
+    const condensed = cleanContent.replace(/\s+/g, ' ').trim();
+    if (!condensed || condensed.length < 40) {
+      cleanContent = '';
+    }
   }
 
   return { properties, cleanContent };
@@ -397,7 +412,7 @@ function extractBulletPropertyBlocks(content: string): { properties: PropertyDat
     if (titleMatch) {
       flushCurrentProperty();
       // Nettoyer le titre des ** markdown et des espaces
-      currentTitle = titleMatch[2].trim().replace(/^\*\*|\*\*$/g, '').trim();
+      currentTitle = sanitizeTitleText(titleMatch[2].trim());
       currentStatusText = trimmed.substring(trimmed.indexOf(titleMatch[4])).trim();
       currentTitleIndex = i;
       continue;
@@ -415,8 +430,8 @@ function extractBulletPropertyBlocks(content: string): { properties: PropertyDat
     if (isPotentialTitle) {
       flushCurrentProperty();
       // Nettoyer le titre des # et ** markdown
-      let titleText = trimmed.replace(/^#+\s*/, '').replace(/^\*\*|\*\*$/g, '').trim();
-      const statusMatch = titleText.match(/(✅|⏳|Disponible|Bientôt).*$/i);
+      let titleText = sanitizeTitleText(trimmed.replace(/^\*\*|\*\*$/g, '').trim());
+      const statusMatch = titleText.match(/(✅|⏳|Disponible|Bient[oô]t|Available|Soon).*$/i);
       if (statusMatch) {
         currentStatusText = statusMatch[0].trim();
         titleText = titleText.replace(statusMatch[0], '').trim();
@@ -446,6 +461,7 @@ function extractBulletPropertyBlocks(content: string): { properties: PropertyDat
 function parsePropertyDetails(title: string, details: string): PropertyData | null {
   // Normaliser les détails : remplacer les lignes vides multiples par une seule ligne vide
   const normalizedDetails = details.replace(/\n{3,}/g, '\n\n').trim();
+  const sanitizedTitle = sanitizeTitleText(title);
   
   const getValue = (labels: string[]): string | undefined => {
     for (const label of labels) {
@@ -570,10 +586,10 @@ function parsePropertyDetails(title: string, details: string): PropertyData | nu
   
   // Validation plus tolérante : on accepte si on a au moins un titre ET (un ID OU un type OU une zone)
   // Cela permet de détecter les propriétés même si certains champs manquent
-  if (title && title.length > 3 && (extractedId || type || zone)) {
+  if (sanitizedTitle && sanitizedTitle.length > 3 && (extractedId || type || zone)) {
     return {
       id: extractedId,
-      title,
+      title: sanitizedTitle,
       zone: zone || '',
       type: type || '',
       pricePerShare: pricePerShare || '',
