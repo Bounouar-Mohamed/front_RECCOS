@@ -985,6 +985,128 @@
         "generic": "Une erreur est survenue. Veuillez réessayer."
       }
     }
+  },
+  "wallet": {
+    "loading": "Chargement du portefeuille...",
+    "placeholders": {
+      "noName": "Nom non renseigné",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "bankAccountHolder": "Titulaire du compte bancaire",
+      "bankName": "Nom de la banque",
+      "iban": "IBAN",
+      "swiftCode": "Code SWIFT / BIC",
+      "payoutMethod": "Méthode de paiement (IBAN, carte, etc.)"
+    },
+    "tabs": {
+      "personal": "Profil",
+      "account": "Compte",
+      "preferences": "Préférences"
+    },
+    "balance": {
+      "title": "Solde disponible",
+      "subtext": "Solde de votre portefeuille RECCOS",
+      "incomingLabel": "Entrées récentes",
+      "outgoingLabel": "Sorties récentes",
+      "addFunds": "Ajouter des fonds",
+      "transfer": "Transférer"
+    },
+    "history": {
+      "title": "Historique des mouvements",
+      "empty": "Aucune transaction pour le moment.",
+      "deposit": "Dépot de fonds",
+      "transferOut": "Transfert sortant",
+      "purchase": "Achat de parts",
+      "columns": {
+        "name": "Nom",
+        "type": "Type",
+        "status": "Statut",
+        "date": "Date"
+      },
+      "searchPlaceholder": "Rechercher",
+      "typeCredit": "Crédit",
+      "typeDebit": "Débit",
+      "statusCompleted": "Terminé",
+      "statusPending": "En attente",
+      "avatarAlt": "Avatar",
+      "closeDrawer": "Fermer le tiroir",
+      "collapse": "Réduire",
+      "expand": "Développer"
+    },
+    "detailsPanelTitle": "Informations de paiement & identité",
+    "detailsPanelDescription": "Ces informations nous permettent de vérifier votre identité et de vous verser vos gains en toute sécurité.",
+    "bankStatus": {
+      "tag": "Coordonnées bancaires"
+    },
+    "fields": {
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "bankAccountHolder": "Titulaire du compte",
+      "bankName": "Banque",
+      "iban": "IBAN",
+      "swiftCode": "Code SWIFT / BIC",
+      "payoutMethod": "Méthode de versement"
+    },
+    "notifications": {
+      "profileUpdatedTitle": "Profil mis à jour",
+      "profileUpdatedDescription": "Vos informations personnelles ont bien été enregistrées.",
+      "avatarUpdatedTitle": "Photo de profil mise à jour",
+      "avatarUpdatedDescription": "Votre avatar a bien été modifié.",
+      "errorTitle": "Une erreur est survenue",
+      "genericError": "Impossible de mettre à jour votre profil pour le moment. Veuillez réessayer."
+    },
+    "actions": {
+      "saving": "Enregistrement...",
+      "save": "Enregistrer les modifications"
+    },
+    "preferences": {
+      "language": "Langue",
+      "notifications": "Notifications",
+      "emailNotifications": "Notifications par email",
+      "emailNotificationsDesc": "Recevez des mises à jour sur vos investissements par email.",
+      "pushNotifications": "Notifications push",
+      "pushNotificationsDesc": "Recevez des alertes en temps réel sur votre appareil.",
+      "security": "Sécurité",
+      "twoFactorAuth": "Authentification à deux facteurs",
+      "twoFactorAuthDesc": "Ajoutez une couche de sécurité supplémentaire à votre compte."
+    },
+    "cards": {
+      "addCard": "Ajouter une carte / compte",
+      "primary": "Principal",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "expiry": "Expire le",
+      "modalTitle": "Ajouter un moyen de paiement",
+      "tabCard": "Carte bancaire",
+      "tabIban": "Compte IBAN",
+      "cardNumber": "Numéro de carte",
+      "cardNumberPlaceholder": "1234 5678 9012 3456",
+      "expiryDate": "Date d'expiration",
+      "expiryPlaceholder": "MM/AA",
+      "cvv": "CVV",
+      "cvvPlaceholder": "123",
+      "holderName": "Nom du titulaire",
+      "holderPlaceholder": "Nom complet",
+      "iban": "IBAN",
+      "ibanPlaceholder": "FR76 1234 5678 9012 3456 7890 123",
+      "bankName": "Nom de la banque",
+      "bankNamePlaceholder": "Ex: BNP Paribas",
+      "swiftCode": "Code SWIFT / BIC",
+      "swiftPlaceholder": "BNPAFRPP",
+      "setAsPrimary": "Définir comme moyen de paiement principal",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce moyen de paiement ?",
+      "noCards": "Aucun moyen de paiement enregistré",
+      "bankAccount": "Compte bancaire",
+      "paymentMethodUpdated": "Moyen de paiement mis à jour",
+      "paymentMethodAdded": "Moyen de paiement ajouté",
+      "paymentMethodDeleted": "Moyen de paiement supprimé"
+    },
+    "titleDeed": {
+      "title": "Vos titres de propriété",
+      "openPdf": "Ouvrir le PDF"
+    }
   }
 }
 

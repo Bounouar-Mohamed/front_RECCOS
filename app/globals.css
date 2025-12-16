@@ -1,5 +1,18 @@
 @layer reset, base, tokens, recipes, utilities;
 
+@font-face {
+  font-family: "Newaed";
+  src: url("/fonts/Newaed-mini.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.aed-symbol {
+  font-family: "Newaed", sans-serif;
+  white-space: nowrap;
+}
+
 @layer reset {
   * {
     margin: 0;

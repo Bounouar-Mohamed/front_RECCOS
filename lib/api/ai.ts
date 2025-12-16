@@ -3,6 +3,16 @@
  */
 import { apiClient } from './client';
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// DÉDUPLICATION DES APPELS - Évite le rate limiting
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const CONVERSATIONS_DEBOUNCE_MS = 3000; // Minimum 3 secondes entre 2 appels
+
+let pendingConversationsRequest: Promise<ConversationSummary[]> | null = null;
+let conversationsCache: ConversationSummary[] | null = null;
+let lastConversationsFetchTime = 0;
+
 export type MessageRole = 'system' | 'user' | 'assistant';
 
 export interface AiMessage {
@@ -113,15 +123,53 @@ export const aiApi = {
   /**
    * Récupérer l'historique des conversations de l'utilisateur
    * Requiert une authentification JWT
+   * 
+   * DÉDUPLICATION: Les appels sont dédupliqués et mis en cache pendant 3 secondes
    */
-  async getConversations(): Promise<ConversationSummary[]> {
-    try {
-      const response = await apiClient.get<BackendResponse<ConversationSummary[]>>('/ai/conversations');
-      return response.data.data || [];
-    } catch (error) {
-      console.error('[AI API] Error fetching conversations:', error);
-      return [];
+  async getConversations(forceRefresh = false): Promise<ConversationSummary[]> {
+    // Si un appel est déjà en cours, réutiliser la promesse
+    if (pendingConversationsRequest) {
+      console.log('[AI API] getConversations: reusing pending request');
+      return pendingConversationsRequest;
     }
+    
+    // Debounce: si le dernier appel était récent et qu'on a un cache, l'utiliser
+    const now = Date.now();
+    const timeSinceLastFetch = now - lastConversationsFetchTime;
+    
+    if (!forceRefresh && conversationsCache && timeSinceLastFetch < CONVERSATIONS_DEBOUNCE_MS) {
+      console.log(`[AI API] getConversations: debounced (${timeSinceLastFetch}ms ago), using cache`);
+      return conversationsCache;
+    }
+    
+    // Créer une promesse partagée
+    pendingConversationsRequest = (async () => {
+      try {
+        console.log('[AI API] getConversations: fetching from backend');
+        lastConversationsFetchTime = Date.now();
+        
+        const response = await apiClient.get<BackendResponse<ConversationSummary[]>>('/ai/conversations');
+        const data = response.data.data || [];
+        
+        conversationsCache = data;
+        return data;
+      } catch (error) {
+        console.error('[AI API] Error fetching conversations:', error);
+        return conversationsCache || [];
+      } finally {
+        pendingConversationsRequest = null;
+      }
+    })();
+    
+    return pendingConversationsRequest;
+  },
+  
+  /**
+   * Invalider le cache des conversations (pour forcer un refresh)
+   */
+  invalidateConversationsCache() {
+    conversationsCache = null;
+    lastConversationsFetchTime = 0;
   },
 
   /**

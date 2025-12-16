@@ -44,8 +44,7 @@ export function AuthFlow() {
 
       try {
         await authService.sendOTP(authData.email);
-        // Succès : passer à l'étape OTP
-        setError(null); // Effacer toute erreur précédente
+        setError(null);
         setCurrentStep('otp');
         setIsAnimating(false);
       } catch (err: any) {
@@ -70,172 +69,82 @@ export function AuthFlow() {
 
   const handleOTPSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('[AuthFlow.handleOTPSubmit] START', {
-      hasOTPCode: !!authData.otpCode,
-      otpCodeLength: authData.otpCode?.length,
-      email: authData.email,
-      isAnimating,
-      currentPath: typeof window !== 'undefined' ? window.location.pathname : 'N/A',
-    });
+    
+    if (!authData.otpCode || isAnimating) return;
+    
+    setIsAnimating(true);
+    setIsVerifyingOTP(true);
+    setError(null);
 
-    if (authData.otpCode && !isAnimating) {
-      setIsAnimating(true);
-      setIsVerifyingOTP(true);
-      setError(null);
+    try {
+      console.log('[AuthFlow] Verifying OTP...');
+      
+      // 1. Vérifier l'OTP auprès du backend
+      const response = await authService.verifyOTP(authData.email, authData.otpCode);
 
-      try {
-        console.log('[AuthFlow.handleOTPSubmit] Calling verifyOTP...', {
-          email: authData.email,
-          otpCodeLength: authData.otpCode.length,
-        });
+      console.log('[AuthFlow] OTP verified, response:', {
+        hasToken: !!response.access_token,
+        hasUser: !!response.user,
+      });
 
-        const response = await authService.verifyOTP(authData.email, authData.otpCode);
-
-        console.log('[AuthFlow.handleOTPSubmit] verifyOTP response received', {
-          hasResponse: !!response,
-          hasUser: !!response?.user,
-          hasToken: !!response?.access_token,
-          userId: response?.user?.id,
-          userEmail: response?.user?.email,
-          tokenLength: response?.access_token?.length,
-        });
-
-        // Vérification de sécurité : s'assurer que response.user existe
-        if (!response || !response.user) {
-          console.error('[AuthFlow.handleOTPSubmit] Invalid response from server', { response });
-          throw new Error('Réponse invalide du serveur');
-        }
-
-        // Vérifier que le token existe
-        if (!response.access_token) {
-          console.error('[AuthFlow.handleOTPSubmit] Missing access token');
-          throw new Error('Token d\'accès manquant');
-        }
-
-        console.log('[AuthFlow.handleOTPSubmit] Calling login store method...', {
-          hasUser: !!response.user,
-          hasToken: !!response.access_token,
-          tokenPreview: response.access_token.substring(0, 20) + '...',
-        });
-
-        login(response);
-
-        // Réinitialiser les états avant la redirection
-        setIsVerifyingOTP(false);
-        setIsAnimating(false);
-
-        console.log('[AuthFlow.handleOTPSubmit] States reset', {
-          isVerifyingOTP: false,
-          isAnimating: false,
-        });
-        
-        const fallbackPath = `/${locale}/wallet`;
-        const redirectParam = searchParams?.get('redirect');
-        const redirectPath = redirectParam && redirectParam.startsWith('/') ? redirectParam : fallbackPath;
-        console.log('[AuthFlow.handleOTPSubmit] Preparing redirect...', {
-          locale,
-          redirectPath,
-          currentPath: typeof window !== 'undefined' ? window.location.pathname : 'N/A',
-          hasToken: !!response.access_token,
-          hasUser: !!response.user,
-        });
-        
-        // Rediriger directement vers la destination demandée (ou /wallet par défaut) après connexion réussie
-        // Utiliser window.location.href pour forcer une navigation complète
-        // Cela permet au middleware de vérifier le cookie httpOnly correctement
-        // Délai de 300ms pour s'assurer que le cookie httpOnly est bien défini dans le navigateur
-        console.log('[AuthFlow.handleOTPSubmit] Setting timeout for redirect...', {
-          redirectPath,
-          delay: 300,
-        });
-
-        setTimeout(() => {
-          console.log('[AuthFlow.handleOTPSubmit] Timeout executed, attempting redirect...', {
-            redirectPath,
-            currentPath: window.location.pathname,
-            currentHref: window.location.href,
-            // Note: document.cookie ne peut pas lire les cookies httpOnly, c'est normal
-            documentCookie: document.cookie,
-            localStorageToken: localStorage.getItem('access_token')?.substring(0, 20) + '...',
-            localStorageUser: localStorage.getItem('user'),
-          });
-
-          // Vérifier si on est toujours sur la page login
-          if (window.location.pathname.includes('/login')) {
-            console.warn('[AuthFlow.handleOTPSubmit] Still on login page, forcing redirect...');
-          }
-
-          try {
-            console.log('[AuthFlow.handleOTPSubmit] Executing window.location.href =', redirectPath);
-            const previousHref = window.location.href;
-            // Utiliser window.location.href pour forcer une navigation complète
-            // Cela permet au middleware de vérifier le cookie httpOnly
-            window.location.href = redirectPath;
-            console.log('[AuthFlow.handleOTPSubmit] window.location.href executed', {
-              previousHref,
-              newHref: redirectPath,
-              // Note: window.location.href peut toujours afficher l'ancienne URL ici
-              // car la navigation est asynchrone
-            });
-
-            // Vérifier après un délai si la redirection a fonctionné
-            setTimeout(() => {
-              console.log('[AuthFlow.handleOTPSubmit] Checking if redirect worked...', {
-                currentPath: window.location.pathname,
-                expectedPath: redirectPath,
-                redirectWorked: window.location.pathname === redirectPath || window.location.href.includes(redirectPath),
-              });
-            }, 500);
-          } catch (redirectError: any) {
-            console.error('[AuthFlow.handleOTPSubmit] Error during redirect:', {
-              error: redirectError,
-              errorType: redirectError?.constructor?.name,
-              message: redirectError?.message,
-              stack: redirectError?.stack,
-            });
-          }
-        }, 300);
-
-        console.log('[AuthFlow.handleOTPSubmit] setTimeout scheduled, function will continue...');
-      } catch (err: any) {
-        console.error('[AuthFlow.handleOTPSubmit] ERROR caught:', {
-          error: err,
-          errorType: err?.constructor?.name,
-          message: err?.message,
-          stack: err?.stack,
-          response: err?.response,
-          responseStatus: err?.response?.status,
-          responseData: err?.response?.data,
-          responseHeaders: err?.response?.headers,
-        });
-
-        const rawMessage =
-          err instanceof Error ? err.message : t('invalidOTP') || 'Code OTP invalide';
-        const normalized = rawMessage?.toUpperCase() ?? '';
-
-        if (
-          normalized.includes('ACCOUNT IS NOT ACTIVE') ||
-          normalized.includes('ACCOUNT_DISABLED')
-        ) {
-          setError(accountDisabledMessage);
-          setCurrentStep('email');
-        } else {
-          setError(rawMessage);
-        }
-
-        setIsAnimating(false);
-        setIsVerifyingOTP(false);
-        setAuthData({ ...authData, otpCode: '' });
+      if (!response.access_token || !response.user) {
+        throw new Error('Réponse invalide du serveur');
       }
+
+      // 2. Login: définir le cookie ET mettre à jour le store
+      console.log('[AuthFlow] Calling login...');
+      const loginSuccess = await login(response);
+
+      if (!loginSuccess) {
+        throw new Error('Échec de la connexion');
+      }
+
+      console.log('[AuthFlow] Login successful, redirecting...');
+      
+      // 3. Rediriger
+      setIsVerifyingOTP(false);
+      setIsAnimating(false);
+      
+      const fallbackPath = `/${locale}/wallet`;
+      const redirectParam = searchParams?.get('redirect');
+      const redirectPath = redirectParam && redirectParam.startsWith('/') ? redirectParam : fallbackPath;
+      
+      // Forcer une navigation complète pour que le middleware lise le cookie httpOnly
+      if (typeof window !== 'undefined') {
+        window.location.assign(redirectPath);
+      } else {
+        router.replace(redirectPath);
+      }
+      return;
+      
+    } catch (err: any) {
+      console.error('[AuthFlow] Error:', err);
+
+      const rawMessage = err instanceof Error ? err.message : t('invalidOTP') || 'Code OTP invalide';
+      const normalized = rawMessage?.toUpperCase() ?? '';
+
+      if (
+        normalized.includes('ACCOUNT IS NOT ACTIVE') ||
+        normalized.includes('ACCOUNT_DISABLED')
+      ) {
+        setError(accountDisabledMessage);
+        setCurrentStep('email');
+      } else {
+        setError(rawMessage);
+      }
+
+      setIsAnimating(false);
+      setIsVerifyingOTP(false);
+      setAuthData({ ...authData, otpCode: '' });
     }
   };
 
   const getStepPlaceholder = () => {
     switch (currentStep) {
       case 'email':
-            return t('emailPlaceholder') || 'yo@gmail.com';
+        return t('emailPlaceholder') || 'yo@gmail.com';
       case 'otp':
-            return t('otpCodePlaceholder') || '000000';
+        return t('otpCodePlaceholder') || '000000';
       default:
         return '';
     }
@@ -265,7 +174,6 @@ export function AuthFlow() {
               value={authData.email}
               onChange={(e) => {
                 setAuthData({ ...authData, email: e.target.value });
-                // Effacer l'erreur quand l'utilisateur tape
                 if (error) setError(null);
               }}
               onSubmit={handleEmailSubmit}
@@ -295,10 +203,7 @@ export function AuthFlow() {
             className={authFlowStyles.stepContainer}
           >
             <h2 className={authFlowStyles.otpTitle}>
-              {error 
-                ? (t('invalidOTP') || 'Code OTP invalide').toUpperCase()
-                : (t('oneTimePassword') || 'One-Time Password').toUpperCase()
-              }
+              {(t('oneTimePassword') || 'One-Time Password').toUpperCase()}
             </h2>
             <VanishForm
               type="text"
@@ -306,19 +211,26 @@ export function AuthFlow() {
               value={authData.otpCode}
               onChange={(e) => {
                 setAuthData({ ...authData, otpCode: e.target.value });
-                // Effacer l'erreur quand l'utilisateur tape
                 if (error) setError(null);
               }}
               onSubmit={handleOTPSubmit}
               isLoading={isAnimating && isVerifyingOTP}
               loadingText={t('verifying')?.replace('...', '') || 'Verification'}
             />
+            {error && (
+              <motion.p
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={authFlowStyles.errorTextInline}
+              >
+                {error}
+              </motion.p>
+            )}
             <p className={authFlowStyles.otpHint}>
               {t('otpSent') || 'Un code a été envoyé à votre adresse email'}
             </p>
           </motion.div>
         )}
-
 
         {currentStep === 'error' && (
           <motion.div
@@ -339,10 +251,8 @@ export function AuthFlow() {
             </button>
           </motion.div>
         )}
-
       </AnimatePresence>
       
-      {/* Footer avec copyright */}
       <motion.footer
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -356,4 +266,3 @@ export function AuthFlow() {
     </div>
   );
 }
-

@@ -984,6 +984,128 @@
         "generic": "حدث خطأ ما. حاول مجدداً."
       }
     }
+  },
+  "wallet": {
+    "loading": "جارٍ تحميل المحفظة...",
+    "placeholders": {
+      "noName": "الاسم غير محدد",
+      "firstName": "الاسم الأول",
+      "lastName": "اسم العائلة",
+      "bankAccountHolder": "صاحب الحساب البنكي",
+      "bankName": "اسم البنك",
+      "iban": "رقم الآيبان IBAN",
+      "swiftCode": "رمز SWIFT / BIC",
+      "payoutMethod": "طريقة التحويل (آيبان، بطاقة، إلخ)"
+    },
+    "tabs": {
+      "personal": "الملف الشخصي",
+      "account": "الحساب",
+      "preferences": "التفضيلات"
+    },
+    "balance": {
+      "title": "الرصيد المتاح",
+      "subtext": "رصيد محفظتك في RECCOS",
+      "incomingLabel": "الإيداعات الأخيرة",
+      "outgoingLabel": "السحوبات الأخيرة",
+      "addFunds": "إضافة رصيد",
+      "transfer": "تحويل"
+    },
+    "history": {
+      "title": "سجل الحركات",
+      "empty": "لا توجد معاملات حتى الآن.",
+      "deposit": "إيداع أموال",
+      "transferOut": "تحويل خارجي",
+      "purchase": "شراء حصص",
+      "columns": {
+        "name": "الاسم",
+        "type": "النوع",
+        "status": "الحالة",
+        "date": "التاريخ"
+      },
+      "searchPlaceholder": "بحث",
+      "typeCredit": "ائتمان",
+      "typeDebit": "خصم",
+      "statusCompleted": "مكتمل",
+      "statusPending": "قيد الانتظار",
+      "avatarAlt": "الصورة الرمزية",
+      "closeDrawer": "إغلاق الدرج",
+      "collapse": "طي",
+      "expand": "توسيع"
+    },
+    "detailsPanelTitle": "بيانات الهوية والتحويلات",
+    "detailsPanelDescription": "نستخدم هذه المعلومات للتحقق من هويتك وتحويل الأرباح إليك بأمان.",
+    "bankStatus": {
+      "tag": "بيانات البنك"
+    },
+    "fields": {
+      "firstName": "الاسم الأول",
+      "lastName": "اسم العائلة",
+      "bankAccountHolder": "صاحب الحساب",
+      "bankName": "البنك",
+      "iban": "رقم الآيبان IBAN",
+      "swiftCode": "رمز SWIFT / BIC",
+      "payoutMethod": "طريقة التحويل"
+    },
+    "notifications": {
+      "profileUpdatedTitle": "تم تحديث الملف الشخصي",
+      "profileUpdatedDescription": "تم حفظ معلوماتك الشخصية بنجاح.",
+      "avatarUpdatedTitle": "تم تحديث صورة الملف الشخصي",
+      "avatarUpdatedDescription": "تم تحديث صورتك بنجاح.",
+      "errorTitle": "حدث خطأ",
+      "genericError": "تعذر تحديث الملف الشخصي حالياً. يرجى المحاولة مرة أخرى."
+    },
+    "actions": {
+      "saving": "جارٍ الحفظ...",
+      "save": "حفظ التغييرات"
+    },
+    "preferences": {
+      "language": "اللغة",
+      "notifications": "الإشعارات",
+      "emailNotifications": "إشعارات البريد الإلكتروني",
+      "emailNotificationsDesc": "تلقي تحديثات حول استثماراتك عبر البريد الإلكتروني.",
+      "pushNotifications": "إشعارات الدفع",
+      "pushNotificationsDesc": "تلقي تنبيهات فورية على جهازك.",
+      "security": "الأمان",
+      "twoFactorAuth": "المصادقة الثنائية",
+      "twoFactorAuthDesc": "أضف طبقة إضافية من الأمان لحسابك."
+    },
+    "cards": {
+      "addCard": "إضافة بطاقة / حساب",
+      "primary": "رئيسي",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "expiry": "تنتهي في",
+      "modalTitle": "إضافة وسيلة دفع",
+      "tabCard": "بطاقة ائتمان",
+      "tabIban": "حساب بنكي",
+      "cardNumber": "رقم البطاقة",
+      "cardNumberPlaceholder": "1234 5678 9012 3456",
+      "expiryDate": "تاريخ الانتهاء",
+      "expiryPlaceholder": "شهر/سنة",
+      "cvv": "CVV",
+      "cvvPlaceholder": "123",
+      "holderName": "اسم صاحب الحساب",
+      "holderPlaceholder": "الاسم الكامل",
+      "iban": "رقم الآيبان",
+      "ibanPlaceholder": "AE07 0331 2345 6789 0123 456",
+      "bankName": "اسم البنك",
+      "bankNamePlaceholder": "مثال: بنك الإمارات",
+      "swiftCode": "رمز SWIFT / BIC",
+      "swiftPlaceholder": "EABORAE1",
+      "setAsPrimary": "تعيين كوسيلة دفع رئيسية",
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "deleteConfirm": "هل أنت متأكد من حذف وسيلة الدفع هذه؟",
+      "noCards": "لا توجد وسائل دفع محفوظة",
+      "bankAccount": "حساب بنكي",
+      "paymentMethodUpdated": "تم تحديث وسيلة الدفع",
+      "paymentMethodAdded": "تمت إضافة وسيلة الدفع",
+      "paymentMethodDeleted": "تم حذف وسيلة الدفع"
+    },
+    "titleDeed": {
+      "title": "سندات ملكيتك",
+      "openPdf": "فتح ملف PDF"
+    }
   }
 }
 

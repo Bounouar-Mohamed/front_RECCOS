@@ -984,6 +984,128 @@
         "generic": "Something went wrong. Please try again."
       }
     }
+  },
+  "wallet": {
+    "loading": "Loading your wallet...",
+    "placeholders": {
+      "noName": "Name not provided",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "bankAccountHolder": "Bank account holder",
+      "bankName": "Bank name",
+      "iban": "IBAN",
+      "swiftCode": "SWIFT / BIC code",
+      "payoutMethod": "Payout method (IBAN, card, etc.)"
+    },
+    "tabs": {
+      "personal": "Profile",
+      "account": "Account",
+      "preferences": "Preferences"
+    },
+    "balance": {
+      "title": "Available balance",
+      "subtext": "Balance of your RECCOS wallet",
+      "incomingLabel": "Recent inflows",
+      "outgoingLabel": "Recent outflows",
+      "addFunds": "Add funds",
+      "transfer": "Transfer"
+    },
+    "history": {
+      "title": "Transaction history",
+      "empty": "No transactions yet.",
+      "deposit": "Funds deposit",
+      "transferOut": "Outgoing transfer",
+      "purchase": "Share purchase",
+      "columns": {
+        "name": "Name",
+        "type": "Type",
+        "status": "Status",
+        "date": "Date"
+      },
+      "searchPlaceholder": "Search",
+      "typeCredit": "Credit",
+      "typeDebit": "Debit",
+      "statusCompleted": "Completed",
+      "statusPending": "Pending",
+      "avatarAlt": "Avatar",
+      "closeDrawer": "Close drawer",
+      "collapse": "Collapse",
+      "expand": "Expand"
+    },
+    "detailsPanelTitle": "Identity & payout details",
+    "detailsPanelDescription": "We use this information to verify your identity and send you payouts securely.",
+    "bankStatus": {
+      "tag": "Bank details"
+    },
+    "fields": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "bankAccountHolder": "Account holder",
+      "bankName": "Bank",
+      "iban": "IBAN",
+      "swiftCode": "SWIFT / BIC code",
+      "payoutMethod": "Payout method"
+    },
+    "notifications": {
+      "profileUpdatedTitle": "Profile updated",
+      "profileUpdatedDescription": "Your personal information has been saved.",
+      "avatarUpdatedTitle": "Profile picture updated",
+      "avatarUpdatedDescription": "Your avatar has been updated.",
+      "errorTitle": "Something went wrong",
+      "genericError": "We couldn't update your profile. Please try again."
+    },
+    "actions": {
+      "saving": "Saving...",
+      "save": "Save changes"
+    },
+    "preferences": {
+      "language": "Language",
+      "notifications": "Notifications",
+      "emailNotifications": "Email notifications",
+      "emailNotificationsDesc": "Receive updates about your investments via email.",
+      "pushNotifications": "Push notifications",
+      "pushNotificationsDesc": "Get real-time alerts on your device.",
+      "security": "Security",
+      "twoFactorAuth": "Two-factor authentication",
+      "twoFactorAuthDesc": "Add an extra layer of security to your account."
+    },
+    "cards": {
+      "addCard": "Add Card / Account",
+      "primary": "Primary",
+      "edit": "Edit",
+      "delete": "Delete",
+      "expiry": "Expires",
+      "modalTitle": "Add a payment method",
+      "tabCard": "Credit Card",
+      "tabIban": "Bank Account",
+      "cardNumber": "Card number",
+      "cardNumberPlaceholder": "1234 5678 9012 3456",
+      "expiryDate": "Expiry date",
+      "expiryPlaceholder": "MM/YY",
+      "cvv": "CVV",
+      "cvvPlaceholder": "123",
+      "holderName": "Account holder name",
+      "holderPlaceholder": "Full name",
+      "iban": "IBAN",
+      "ibanPlaceholder": "GB82 WEST 1234 5698 7654 32",
+      "bankName": "Bank name",
+      "bankNamePlaceholder": "e.g. HSBC",
+      "swiftCode": "SWIFT / BIC code",
+      "swiftPlaceholder": "HSBCGB2L",
+      "setAsPrimary": "Set as primary payment method",
+      "save": "Save",
+      "cancel": "Cancel",
+      "deleteConfirm": "Are you sure you want to delete this payment method?",
+      "noCards": "No payment methods saved",
+      "bankAccount": "Bank Account",
+      "paymentMethodUpdated": "Payment method updated",
+      "paymentMethodAdded": "Payment method added",
+      "paymentMethodDeleted": "Payment method deleted"
+    },
+    "titleDeed": {
+      "title": "Your title deeds",
+      "openPdf": "Open PDF"
+    }
   }
 }
 

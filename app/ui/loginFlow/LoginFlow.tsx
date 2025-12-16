@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -43,155 +43,100 @@ export function LoginFlow() {
 
   const handlePasswordSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('[LoginFlow] handlePasswordSubmit called', { 
-      hasPassword: !!loginData.password, 
-      isAnimating,
-      email: loginData.email 
-    });
     
-    if (loginData.password && !isAnimating) {
-      console.log('[LoginFlow] Starting login process...');
-      setIsAnimating(true);
-      setCurrentStep('loading');
-      setError(null);
-      
-      try {
-        console.log('[LoginFlow] Calling authService.login...', { 
-          email: loginData.email,
-          hasPassword: !!loginData.password 
-        });
-        
-        const response = await authService.login({
-          email: loginData.email,
-          password: loginData.password,
-        });
-        
-        console.log('[LoginFlow] Login successful!', { 
-          hasToken: !!response.access_token,
-          hasUser: !!response.user,
-          userId: response.user?.id 
-        });
-        
-        console.log('[LoginFlow] Calling login store method...');
-        login(response);
-        
-        console.log('[LoginFlow] Setting success step...');
-        // Afficher un message de succès avant la redirection
-        setCurrentStep('success');
-        
-        console.log('[LoginFlow] Scheduling redirect to dashboard...');
-        setTimeout(() => {
-          console.log('[LoginFlow] Redirecting to dashboard...');
-          router.push(`/${locale}/wallet`);
-        }, 1000);
-      } catch (err: any) {
-        console.error('[LoginFlow] Login error caught:', err);
-        console.error('[LoginFlow] Error type:', typeof err);
-        console.error('[LoginFlow] Error instanceof Error:', err instanceof Error);
-        console.error('[LoginFlow] Error message:', err?.message);
-        console.error('[LoginFlow] Error response:', err?.response);
-        console.error('[LoginFlow] Error response data:', err?.response?.data);
-        
-        const errorMessage = err instanceof Error ? err.message : 'Erreur de connexion';
-        console.log('[LoginFlow] Setting error message:', errorMessage);
-        setError(errorMessage);
-        setIsAnimating(false);
-        
-        // Détecter les différents cas d'erreur
-        const errorLower = errorMessage.toLowerCase();
-        console.log('[LoginFlow] Error message (lowercase):', errorLower);
-        
-        // Cas 2FA requis - le backend renvoie maintenant "2FA code required"
-        if (
-          errorLower.includes('2fa code required') ||
-          errorLower.includes('2fa') || 
-          errorLower.includes('two-factor') ||
-          errorLower.includes('code required')
-        ) {
-          console.log('[LoginFlow] Detected 2FA required, moving to 2FA step');
-          // Passer à l'étape 2FA
-          setCurrentStep('2fa');
-        } 
-        // Compte verrouillé
-        else if (errorLower.includes('locked') || errorLower.includes('verrouillé')) {
-          console.log('[LoginFlow] Detected account locked, showing error');
-          setCurrentStep('error');
-        }
-        // Email non vérifié
-        else if (errorLower.includes('email not verified') || errorLower.includes('email non vérifié')) {
-          console.log('[LoginFlow] Detected email not verified, showing error');
-          setCurrentStep('error');
-        }
-        // Compte inactif
-        else if (errorLower.includes('not active') || errorLower.includes('inactif')) {
-          console.log('[LoginFlow] Detected account not active, showing error');
-          setCurrentStep('error');
-        }
-        // Trop de tentatives
-        else if (errorLower.includes('too many') || errorLower.includes('trop de')) {
-          console.log('[LoginFlow] Detected too many attempts, showing error');
-          setCurrentStep('error');
-        }
-        // Identifiants invalides ou autres erreurs
-        else {
-          console.log('[LoginFlow] Generic error, showing error step');
-          setCurrentStep('error');
-        }
-        
-        console.log('[LoginFlow] Error handling complete, currentStep should be:', 
-          errorLower.includes('2fa') ? '2fa' : 'error'
-        );
-      }
-    } else {
-      console.log('[LoginFlow] Cannot submit:', { 
-        hasPassword: !!loginData.password, 
-        isAnimating 
+    if (!loginData.password || isAnimating) return;
+    
+    setIsAnimating(true);
+    setCurrentStep('loading');
+    setError(null);
+    
+    try {
+      const response = await authService.login({
+        email: loginData.email,
+        password: loginData.password,
       });
+      
+      // Login: définir le cookie ET mettre à jour le store
+      const loginSuccess = await login(response);
+      
+      if (!loginSuccess) {
+        throw new Error('Échec de la connexion');
+      }
+      
+      setCurrentStep('success');
+      const targetPath = `/${locale}/wallet`;
+      setTimeout(() => {
+        if (typeof window !== 'undefined') {
+          window.location.assign(targetPath);
+        } else {
+          router.push(targetPath);
+        }
+      }, 300);
+      
+    } catch (err: any) {
+      const errorMessage = err instanceof Error ? err.message : 'Erreur de connexion';
+      setError(errorMessage);
+      setIsAnimating(false);
+      
+      const errorLower = errorMessage.toLowerCase();
+      
+      if (
+        errorLower.includes('2fa code required') ||
+        errorLower.includes('2fa') || 
+        errorLower.includes('two-factor') ||
+        errorLower.includes('code required')
+      ) {
+        setCurrentStep('2fa');
+      } else {
+        setCurrentStep('error');
+      }
     }
   };
 
   const handle2FASubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (loginData.twoFactorCode && !isAnimating) {
-      setIsAnimating(true);
-      setCurrentStep('loading');
-      setError(null);
+    
+    if (!loginData.twoFactorCode || isAnimating) return;
+    
+    setIsAnimating(true);
+    setCurrentStep('loading');
+    setError(null);
+    
+    try {
+      const response = await authService.login({
+        email: loginData.email,
+        password: loginData.password,
+        twoFactorCode: loginData.twoFactorCode,
+      });
       
-      try {
-        const response = await authService.login({
-          email: loginData.email,
-          password: loginData.password,
-          twoFactorCode: loginData.twoFactorCode,
-        });
-        
-        login(response);
-        // Afficher un message de succès avant la redirection
-        setCurrentStep('success');
-        setTimeout(() => {
-          router.push(`/${locale}/wallet`);
-        }, 1000);
-      } catch (err: any) {
-        console.error('2FA error:', err);
-        const errorMessage = err instanceof Error ? err.message : 'Erreur de connexion';
-        setError(errorMessage);
-        setIsAnimating(false);
-        
-        const errorLower = errorMessage.toLowerCase();
-        
-        // Si erreur 2FA invalide, on reste sur l'étape 2FA pour réessayer
-        if (errorLower.includes('invalid 2fa') || errorLower.includes('code invalide')) {
-          setCurrentStep('2fa');
-          // Réinitialiser le code pour permettre une nouvelle tentative
-          setLoginData({ ...loginData, twoFactorCode: '' });
-        } 
-        // Trop de tentatives 2FA
-        else if (errorLower.includes('too many failed 2fa')) {
-          setCurrentStep('error');
+      const loginSuccess = await login(response);
+      
+      if (!loginSuccess) {
+        throw new Error('Échec de la connexion');
+      }
+      
+      setCurrentStep('success');
+      const targetPath = `/${locale}/wallet`;
+      setTimeout(() => {
+        if (typeof window !== 'undefined') {
+          window.location.assign(targetPath);
+        } else {
+          router.push(targetPath);
         }
-        // Autres erreurs
-        else {
-          setCurrentStep('error');
-        }
+      }, 300);
+      
+    } catch (err: any) {
+      const errorMessage = err instanceof Error ? err.message : 'Erreur de connexion';
+      setError(errorMessage);
+      setIsAnimating(false);
+      
+      const errorLower = errorMessage.toLowerCase();
+      
+      if (errorLower.includes('invalid 2fa') || errorLower.includes('code invalide')) {
+        setCurrentStep('2fa');
+        setLoginData({ ...loginData, twoFactorCode: '' });
+      } else {
+        setCurrentStep('error');
       }
     }
   };
@@ -204,23 +149,6 @@ export function LoginFlow() {
         return t('password');
       case '2fa':
         return t('twoFactorCode');
-      default:
-        return '';
-    }
-  };
-
-  const getStepTitle = () => {
-    switch (currentStep) {
-      case 'email':
-        return 'Email';
-      case 'password':
-        return 'Password';
-      case '2fa':
-        return '2FA Code';
-      case 'loading':
-        return 'Connexion...';
-      case 'error':
-        return error || 'Erreur';
       default:
         return '';
     }
@@ -335,4 +263,3 @@ export function LoginFlow() {
     </div>
   );
 }
-

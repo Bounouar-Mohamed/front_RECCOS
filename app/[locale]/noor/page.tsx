@@ -713,8 +713,8 @@ const AppleBorderGradient = ({
           animate={{
             opacity: 1,
             background: [
-              'linear-gradient(0deg, rgb(59, 130, 246), rgb(168, 85, 247), rgb(239, 68, 68), rgb(249, 115, 22))',
-              'linear-gradient(360deg, rgb(59, 130, 246), rgb(168, 85, 247), rgb(239, 68, 68), rgb(249, 115, 22))',
+              'linear-gradient(0deg, rgb(0, 0, 0), rgb(220, 220, 220), rgb(240, 240, 240), rgb(0, 0, 0))',
+              'linear-gradient(360deg, rgb(200, 200, 200), rgb(0, 0, 0), rgb(240, 240, 240), rgb(255, 255, 255))',
             ],
             scale: [1, 1.002, 1],
           }}

@@ -139,6 +139,30 @@ function extractProperties(content: string): { properties: PropertyData[]; clean
   const properties: PropertyData[] = [];
   let cleanContent = content;
   
+  // ============================================
+  // GARDE STRICT : Ne parser les propriétés QUE si c'est une liste explicite
+  // On cherche le marqueur du template backend
+  // ============================================
+  const isPropertyListResponse = 
+    content.includes('Voici les propriétés disponibles') ||
+    content.includes('Voici ce qui est disponible') ||
+    content.includes('propriétés disponibles ✨') ||
+    /^━+$/m.test(content); // Format avec séparateurs
+  
+  // Si ce n'est PAS une liste de propriétés, on ne parse pas
+  if (!isPropertyListResponse) {
+    // Juste nettoyer les blocs mal formatés qui auraient pu être générés
+    cleanContent = content
+      .replace(/AVAILABLE PROPERT(Y|IES)/gi, '')
+      .replace(/^🏠.*$/gm, '')
+      .replace(/^DISCOVER$/gm, '')
+      .replace(/^\d[\d,.\s]*AED\s*$/gm, '')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+    
+    return { properties: [], cleanContent };
+  }
+  
   const normalizedContent = content
     .replace(/```/g, '')        // retirer les fences markdown qui cassent le parsing des cartes
     .replace(/\r/g, '')         // normaliser les retours chariot

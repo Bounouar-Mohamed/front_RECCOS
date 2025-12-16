@@ -332,10 +332,10 @@ export const noorPageStyles = {
   }),
 
   cancelButton: css({
-    bg: 'rgba(239, 68, 68, 0.8)',
-    border: '0.5px solid rgba(239, 68, 68, 0.6)',
+    bg: 'rgba(93, 93, 93, 0.8)',
+    border: '0.5px solid rgba(93, 93, 93, 0.6)',
     _hover: {
-      bg: 'rgba(239, 68, 68, 1)',
+      bg: 'rgba(93, 93, 93, 1)',
     },
   }),
 

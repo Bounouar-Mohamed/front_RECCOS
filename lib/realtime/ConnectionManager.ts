@@ -221,7 +221,7 @@ export class ConnectionManager {
       console.log('[ConnectionManager] Token prefix:', token?.substring(0, 3));
       if (!token || typeof token !== 'string' || !token.startsWith('ek_')) {
         console.error('[ConnectionManager] ❌ Invalid token format:', token);
-        throw new Error('Token invalide reçu du backend');
+        throw new Error('Invalid token received from backend');
       }
       console.log('[ConnectionManager] Got ephemeral token:', token.substring(0, 15) + '...');
       return token;
@@ -331,7 +331,7 @@ export class ConnectionManager {
 
   private createAudioElement(): HTMLAudioElement {
     if (typeof document === 'undefined') {
-      throw new Error('Document non disponible pour créer un élément audio');
+      throw new Error('Document not available to create audio element');
     }
 
     if (this.audioElement) {
@@ -615,7 +615,7 @@ export class ConnectionManager {
     // Événement quand un tool commence
     this.session.on('agent_tool_start', (context: any, agent: any, tool: any, details: any) => {
       console.log('[ConnectionManager] 🔧 Tool started:', tool?.name, details);
-      this.events.onAssistantTranscript?.('Je vérifie...', false);
+      this.events.onAssistantTranscript?.('Checking...', false);
     });
 
     // Événement quand un tool termine
@@ -635,7 +635,7 @@ export class ConnectionManager {
     try {
       // Vérifier si l'API est disponible
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        throw new Error('WebRTC non supporté par ce navigateur');
+        throw new Error('WebRTC not supported by this browser');
       }
 
       // Demander l'accès au microphone
@@ -646,11 +646,11 @@ export class ConnectionManager {
       return stream;
     } catch (error: any) {
       if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-        throw new Error('Accès au microphone refusé. Veuillez autoriser l\'accès au microphone dans les paramètres de votre navigateur.');
+        throw new Error('Microphone access denied. Please allow microphone access in your browser settings.');
       } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
-        throw new Error('Aucun microphone détecté. Veuillez connecter un microphone.');
+        throw new Error('No microphone detected. Please connect a microphone.');
       } else {
-        throw new Error(`Erreur d'accès au microphone: ${error.message}`);
+        throw new Error(`Microphone access error: ${error.message}`);
       }
     }
   }
@@ -890,7 +890,7 @@ export class ConnectionManager {
       console.error('[ConnectionManager] Reconnect failed:', error);
       if (this.reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
         this.setStatus('error');
-        this.events.onError?.(new Error('Impossible de se reconnecter'));
+        this.events.onError?.(new Error('Unable to reconnect'));
       }
     }
   }
@@ -929,7 +929,7 @@ export class ConnectionManager {
 
   async sendTextMessage(text: string): Promise<void> {
     if (!this.session || this.status !== 'connected') {
-      throw new Error('Session non connectée');
+      throw new Error('Session not connected');
     }
 
     try {

@@ -61,9 +61,19 @@ export const ChatHistory = forwardRef<ChatHistoryRef, ChatHistoryProps>(({
     // Exposer la méthode refresh via ref pour permettre un rafraîchissement externe
     useImperativeHandle(ref, () => ({
         refresh: async () => {
-            await loadConversations();
+            // Forcer le refresh depuis le ref (utilisé après création de conversation)
+            setIsLoading(true);
+            try {
+                aiApi.invalidateConversationsCache();
+                const data = await aiApi.getConversations(true);
+                setConversations(data);
+            } catch (error) {
+                console.error('[ChatHistory] Error refreshing conversations:', error);
+            } finally {
+                setIsLoading(false);
+            }
         },
-    }), [loadConversations]);
+    }), []);
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -74,11 +84,8 @@ export const ChatHistory = forwardRef<ChatHistoryRef, ChatHistoryProps>(({
     // Rafraîchir l'historique quand une nouvelle conversation est créée
     useEffect(() => {
         if (isAuthenticated && currentConversationId) {
-            // Petit délai pour laisser le temps au backend de sauvegarder
-            const timer = setTimeout(() => {
-                loadConversations();
-            }, 500); // Réduit à 500ms pour un feedback plus rapide
-            return () => clearTimeout(timer);
+            // Le debounce dans aiApi gère les appels multiples
+            loadConversations();
         }
     }, [isAuthenticated, currentConversationId, loadConversations]);
 
