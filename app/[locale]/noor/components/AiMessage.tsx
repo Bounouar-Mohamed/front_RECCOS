@@ -144,6 +144,12 @@ function sanitizeTitleText(rawTitle: string): string {
     .trim();
 }
 
+function sanitizeUnsupportedPromises(text: string): string {
+  return text
+    .replace(/je (?:peux|vais) te mettre sur liste d'attente[^.?!]*[.?!]?/gi, "Je ne peux pas t'ajouter automatiquement à une liste d'attente, mais je peux te partager les disponibilités ici.")
+    .replace(/i (?:can|will) put you on (?:the )?waitlist[^.?!]*[.?!]?/gi, "I can't automatically add you to a waitlist, but I can keep you updated here.");
+}
+
 function extractProperties(content: string): { properties: PropertyData[]; cleanContent: string } {
   const properties: PropertyData[] = [];
   let cleanContent = content;
@@ -608,7 +614,9 @@ function parsePropertyDetails(title: string, details: string): PropertyData | nu
 function parseMarkdown(text: string): string {
   if (!text || text.trim() === '') return '';
   
-  let html = text
+  const source = sanitizeUnsupportedPromises(text);
+  
+  let html = source
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
