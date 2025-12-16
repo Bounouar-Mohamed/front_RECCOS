@@ -155,8 +155,9 @@ function extractProperties(content: string): { properties: PropertyData[]; clean
   let cleanContent = content;
   
   // ============================================
-  // GARDE FLEXIBLE : analyser les listes explicites mais tolérer
-  // les formulations courantes ("Voici ce qui est dispo", etc.)
+  // GARDE FLEXIBLE :
+  // - on privilégie les formulations explicites ("Voici ce qui est dispo")
+  // - mais on tente aussi l'extraction dès qu'on détecte des champs structurés
   // ============================================
   const normalizedHeader = content.toLowerCase();
   const propertyTriggers = [
@@ -173,9 +174,10 @@ function extractProperties(content: string): { properties: PropertyData[]; clean
     'here is what i can show you',
   ];
   const hasTrigger = propertyTriggers.some((trigger) => normalizedHeader.includes(trigger));
-  const isPropertyListResponse = hasTrigger || /^━+$/m.test(content); // Format avec séparateurs
+  const hasStructuredFields = /(id\s*:|image\s*:|prix par part|price per share|parts restantes|bedrooms|chambres|zone\s*:|type\s*:|superficie|area|available le|disponible le)/i.test(content);
+  const isPropertyListResponse = hasTrigger || hasStructuredFields || /^━+$/m.test(content); // Format avec séparateurs ou champs
   
-  // Si ce n'est PAS une liste de propriétés, on ne parse pas
+  // Si aucun signal de propriété, retourner le contenu nettoyé
   if (!isPropertyListResponse) {
     // Juste nettoyer les blocs mal formatés qui auraient pu être générés
     cleanContent = content
