@@ -376,14 +376,72 @@
     },
     "actions": {
       "newProperty": "New property",
-      "openUsers": "Account management"
+      "openUsers": "User directory"
+    },
+    "heroHighlights": {
+      "assets": "Visible assets",
+      "aum": "Tracked AUM",
+      "investors": "Investors",
+      "volume": "Inventory volume"
     },
     "stats": {
       "total": "Active listings",
       "published": "Published",
       "pending": "Pending",
       "investors": "Investors (view)",
-      "volume": "Tracked volume"
+      "volume": "Tracked volume",
+      "aum": "Assets under management",
+      "aumHelper": "Gross value of listed assets",
+      "capital": "Invested capital",
+      "capitalHelper": "Shares already sold",
+      "available": "Available capacity",
+      "availableHelper": "Remaining shares to distribute",
+      "monthlyIncome": "Projected monthly income",
+      "monthlyIncomeHelper": "Based on sold shares and rental yield",
+      "avgRoi": "Average ROI",
+      "avgRoiHelper": "Weighted across active assets",
+      "avgYield": "Average rental yield",
+      "avgYieldHelper": "Monthly performance snapshot"
+    },
+    "distributions": {
+      "title": "Portfolio distribution",
+      "subtitle": "High-level breakdown of the current pipeline.",
+      "status": "By status",
+      "type": "By property type",
+      "emirate": "By emirate",
+      "empty": "No data available yet."
+    },
+    "performance": {
+      "title": "Performance leaderboard",
+      "subtitle": "Top performing assets across the funnel.",
+      "roi": "Top ROI",
+      "yield": "Top rental yield",
+      "liquidity": "Fastest selling",
+      "badge": {
+        "roi": "ROI",
+        "yield": "Yield",
+        "occupancy": "Sold"
+      },
+      "empty": "No asset qualifies yet.",
+      "notAvailable": "N/A"
+    },
+    "navigation": {
+      "portfolio": "Portfolio cockpit",
+      "portfolioDesc": "KPIs, distributions and highlights.",
+      "inventory": "Property inventory",
+      "inventoryDesc": "Filter, review and enrich every listing.",
+      "brands": "Developers & brands",
+      "brandsDesc": "Maintain the curated brand catalog.",
+      "users": "Users & access",
+      "usersDesc": "Browse every account and adjust access levels.",
+      "selectPrompt": "Select a module to surface its dashboard.",
+      "locked": "This module is only available to super admins.",
+      "meta": {
+        "aum": "Tracked AUM",
+        "inventory": "Visible assets",
+        "brands": "Brands",
+        "users": "Users"
+      }
     },
     "filters": {
       "searchPlaceholder": "Search a property...",
@@ -424,6 +482,95 @@
       "feedback": {
         "created": "Brand added successfully.",
         "updated": "Brand updated."
+      }
+    },
+    "usersPanel": {
+      "loading": "Loading user accounts...",
+      "empty": "No account matches your filters.",
+      "refresh": "Refresh list",
+      "refreshing": "Refreshing...",
+      "readOnly": "Only super admins can manage roles.",
+      "status": {
+        "active": "Active",
+        "inactive": "Suspended"
+      },
+      "actions": {
+        "activate": "Activate",
+        "deactivate": "Suspend"
+      },
+      "filters": {
+        "searchPlaceholder": "Search by name, email or username...",
+        "roleLabel": "Filter by role",
+        "statusLabel": "Filter by status",
+        "role": {
+          "all": "All roles"
+        },
+        "status": {
+          "all": "All statuses",
+          "active": "Active",
+          "inactive": "Suspended"
+        }
+      },
+      "roleLabels": {
+        "client": "Client",
+        "agent": "Agent",
+        "admin": "Admin",
+        "superadmin": "Super admin"
+      },
+      "stats": {
+        "total": "Accounts",
+        "active": "Active",
+        "clients": "Clients",
+        "admins": "Admins"
+      },
+      "table": {
+        "title": "Users",
+        "count": "{count} accounts",
+        "columns": {
+          "user": "User",
+          "role": "Role",
+          "status": "Status",
+          "created": "Created",
+          "actions": "Actions"
+        },
+        "never": "—"
+      },
+      "details": {
+        "close": "Close profile",
+        "stats": {
+          "totalInvestments": "Investments",
+          "investedAmount": "Invested amount",
+          "propertiesCount": "Properties",
+          "averageTicket": "Avg ticket",
+          "sessionsCount": "Sessions",
+          "lastLogin": "Last login",
+          "never": "Never"
+        },
+        "investments": {
+          "title": "Recent investments",
+          "subtitle": "Latest tickets associated with this user.",
+          "columns": {
+            "property": "Property",
+            "amount": "Amount",
+            "date": "Date",
+            "status": "Status"
+          },
+          "shares": "{count} shares",
+          "empty": "No investment recorded for now."
+        },
+        "activity": {
+          "title": "Recent activity",
+          "subtitle": "Audit trail of back-office actions.",
+          "empty": "No activity recorded yet."
+        },
+        "error": "Unable to load user details.",
+        "placeholder": "Advanced insights will appear here as soon as the API endpoint is available.",
+        "disabled": "User insights are disabled in this environment."
+      },
+      "errors": {
+        "fetch": "Unable to load user accounts.",
+        "updateRole": "Unable to update the role.",
+        "updateStatus": "Unable to update the status."
       }
     },
     "table": {
@@ -520,7 +667,8 @@
     },
     "errors": {
       "fetch": "Unable to load properties.",
-      "action": "This action cannot be completed."
+      "action": "This action cannot be completed.",
+      "rateLimit": "Too many requests. Please wait a few seconds before trying again."
     },
     "loading": "Loading properties...",
     "empty": "No property matches your filters.",

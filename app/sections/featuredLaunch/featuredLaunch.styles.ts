@@ -27,11 +27,22 @@ export const featuredLaunchStyles = {
     maxW: { base: '100%', sm: '320px', md: '380px', lg: '420px', xl: '480px' },
     aspectRatio: '1 / 1',
     borderRadius: { base: '20px', sm: '24px', md: '28px', lg: '32px', xl: '36px' },
-    overflow: 'hidden',
+    // On laisse ce conteneur en overflow visible pour permettre
+    // au dropdown de notification de dépasser librement
+    overflow: 'visible',
     isolation: 'isolate',
     bg: '#0d0d0c',
     boxShadow: { base: '0 15px 40px rgba(0,0,0,0.45)', md: '0 25px 60px rgba(0,0,0,0.55)' },
     alignSelf: 'center',
+  }),
+  // Wrapper interne qui clippe uniquement le visuel (image + overlays),
+  // afin de ne pas couper la dropdown de notification positionnée au-dessus.
+  mediaVisual: css({
+    position: 'absolute',
+    inset: 0,
+    borderRadius: { base: '20px', sm: '24px', md: '28px', lg: '32px', xl: '36px' },
+    overflow: 'hidden',
+    isolation: 'isolate',
   }),
   mediaImage: css({
     position: 'absolute',
@@ -39,7 +50,7 @@ export const featuredLaunchStyles = {
     w: '100%',
     h: '100%',
     objectFit: 'cover',
-    transform: 'scale(1.05)',
+    // transform: 'scale(1.05)',
     filter: 'blur(16px)',
     opacity: 0.9,
     transition: 'filter 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1)',

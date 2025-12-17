@@ -437,43 +437,46 @@ export const FeaturedLaunch = () => {
               )}
             </div>
           )}
-          <Image
-            src={heroImage}
-            alt={heroTitle}
-            fill
-            className={isJustLaunched ? featuredLaunchStyles.mediaImageClear : featuredLaunchStyles.mediaImage}
-            priority
-            unoptimized
-          />
-          {/* Badge "Disponible" en haut à droite quand live */}
-          {isJustLaunched && (
-            <div className={featuredLaunchStyles.liveBadgeTopRight}>
-              <span className={featuredLaunchStyles.liveDot} />
-              <span className={featuredLaunchStyles.liveText}>{t('nowAvailable.badge')}</span>
-            </div>
-          )}
-          
-          {/* Countdown centré quand pas encore lancé */}
-          {!isJustLaunched && (
-            <div className={featuredLaunchStyles.mediaContent}>
-              <AnimatedNumbersShowcase
-                legend={t('countdownLegend')}
-                labels={countdownLabels}
-                targetDate={countdownTarget}
-              />
-            </div>
-          )}
-          
-          {/* CTA overlay en bas de l'image quand live */}
-          {isJustLaunched && (
-            <button
-              type="button"
-              onClick={() => router.push(`/${locale}/product/${featuredProperty.id}`)}
-              className={featuredLaunchStyles.liveCtaOverlay}
-            >
-              <span>{t('nowAvailable.cta')}</span>
-            </button>
-          )}
+
+          <div className={featuredLaunchStyles.mediaVisual}>
+            <Image
+              src={heroImage}
+              alt={heroTitle}
+              fill
+              className={isJustLaunched ? featuredLaunchStyles.mediaImageClear : featuredLaunchStyles.mediaImage}
+              priority
+              unoptimized
+            />
+            {/* Badge "Disponible" en haut à droite quand live */}
+            {isJustLaunched && (
+              <div className={featuredLaunchStyles.liveBadgeTopRight}>
+                <span className={featuredLaunchStyles.liveDot} />
+                <span className={featuredLaunchStyles.liveText}>{t('nowAvailable.badge')}</span>
+              </div>
+            )}
+            
+            {/* Countdown centré quand pas encore lancé */}
+            {!isJustLaunched && (
+              <div className={featuredLaunchStyles.mediaContent}>
+                <AnimatedNumbersShowcase
+                  legend={t('countdownLegend')}
+                  labels={countdownLabels}
+                  targetDate={countdownTarget}
+                />
+              </div>
+            )}
+            
+            {/* CTA overlay en bas de l'image quand live */}
+            {isJustLaunched && (
+              <button
+                type="button"
+                onClick={() => router.push(`/${locale}/product/${featuredProperty.id}`)}
+                className={featuredLaunchStyles.liveCtaOverlay}
+              >
+                <span>{t('nowAvailable.cta')}</span>
+              </button>
+            )}
+          </div>
         </div>
         <div className={featuredLaunchStyles.detailsPanel}>
           {/* Tagline quand live */}

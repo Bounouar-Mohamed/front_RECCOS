@@ -12,8 +12,8 @@ interface HeroProps {
 }
 
 export const Hero = ({ isPreloaderComplete }: HeroProps) => {
-  const [imageLoaded, setImageLoaded] = useState(false);
   const [preloaderReady, setPreloaderReady] = useState(false);
+  const [isHeroReady, setIsHeroReady] = useState(false);
   const [shouldShow, setShouldShow] = useState(false);
 
   // Vérifier l'état du preloader du layout (data-preloader-ready sur le body)
@@ -36,39 +36,23 @@ export const Hero = ({ isPreloaderComplete }: HeroProps) => {
     return () => observer.disconnect();
   }, []);
 
-  // Précharger l'image pendant le preloader
+  // Considérer le hero prêt dès que le preloader global est terminé
   useEffect(() => {
-    const img = new window.Image();
-    img.src = '/images/LayoutReccosV4.png';
-    
-    // Si l'image est déjà en cache, elle se charge immédiatement
-    if (img.complete) {
-      setImageLoaded(true);
+    if (preloaderReady || isPreloaderComplete) {
+      setIsHeroReady(true);
+    }
+  }, [preloaderReady, isPreloaderComplete]);
+
+  // Afficher le Hero uniquement quand le préloader est terminé
+  useEffect(() => {
+    if (!isHeroReady) {
       return;
     }
-    
-    img.onload = () => {
-      setImageLoaded(true);
-    };
-    img.onerror = () => {
-      // Même en cas d'erreur, on considère que c'est chargé pour ne pas bloquer
-      setImageLoaded(true);
-    };
-  }, []);
-
-  // Afficher le Hero seulement quand :
-  // 1. Le preloader du layout est terminé (data-preloader-ready OU isPreloaderComplete)
-  // 2. L'image est chargée
-  useEffect(() => {
-    const isReady = preloaderReady || isPreloaderComplete;
-    if (isReady && imageLoaded) {
-      // Petit délai pour s'assurer que le preloader est complètement terminé
-      const timer = setTimeout(() => {
-        setShouldShow(true);
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [preloaderReady, isPreloaderComplete, imageLoaded]);
+    const timer = setTimeout(() => {
+      setShouldShow(true);
+    }, 80);
+    return () => clearTimeout(timer);
+  }, [isHeroReady]);
 
   return (
     <section className={heroStyles.root}>
@@ -126,12 +110,11 @@ export const Hero = ({ isPreloaderComplete }: HeroProps) => {
                   priority
                   className={heroStyles.image}
                   quality={100}
-                  onLoad={() => setImageLoaded(true)}
                 />
               </motion.div>
               
               {/* Contenu Hero */}
-              <HeroContent />
+              <HeroContent isActive={shouldShow} />
             </div>
           </motion.div>
         )}

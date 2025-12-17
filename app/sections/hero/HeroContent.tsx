@@ -5,7 +5,11 @@ import { motion } from 'framer-motion';
 import { useMemo, useRef } from 'react';
 import { heroStyles } from './hero.styles';
 
-export const HeroContent = () => {
+interface HeroContentProps {
+  isActive: boolean;
+}
+
+export const HeroContent = ({ isActive }: HeroContentProps) => {
   const t = useTranslations('home.hero');
   const hasAnimatedRef = useRef(false);
 
@@ -67,7 +71,7 @@ export const HeroContent = () => {
       <motion.div 
         className={heroStyles.bottomContentArea}
         initial="hidden"
-        animate="visible"
+        animate={isActive ? 'visible' : 'hidden'}
         variants={containerVariants}
         onAnimationComplete={() => {
           hasAnimatedRef.current = true;

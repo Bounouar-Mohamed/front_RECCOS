@@ -1,13 +1,55 @@
 import { apiClient, getErrorMessage } from './client';
 import type { User } from './auth';
+import type { AxiosError } from 'axios';
 
-export interface AdminUser
-  extends Pick<
-    User,
-    'id' | 'email' | 'firstName' | 'lastName' | 'username' | 'role' | 'emailVerified' | 'isActive'
-  > {
-  createdAt?: string;
+export type AdminUser = User & {
+  lastLoginAt?: string | null;
+};
+
+export interface UserInvestmentInsight {
+  propertyId: string;
+  propertyTitle: string;
+  amount: number;
+  shares?: number | null;
+  status?: string | null;
+  investedAt?: string | null;
 }
+
+export interface UserActionInsight {
+  id: string;
+  type: string;
+  description: string;
+  createdAt: string;
+  metadata?: Record<string, any>;
+}
+
+export interface UserInsights {
+  stats: {
+    totalInvestments: number;
+    investedAmount: number;
+    propertiesCount: number;
+    averageTicket?: number | null;
+    sessionsCount?: number | null;
+    lastLoginAt?: string | null;
+  };
+  investments: UserInvestmentInsight[];
+  activity: UserActionInsight[];
+  placeholder?: boolean;
+}
+
+const emptyUserInsights: UserInsights = {
+  stats: {
+    totalInvestments: 0,
+    investedAmount: 0,
+    propertiesCount: 0,
+    averageTicket: 0,
+    sessionsCount: 0,
+    lastLoginAt: null,
+  },
+  investments: [],
+  activity: [],
+  placeholder: true,
+};
 
 export const adminService = {
   async listUsers(): Promise<AdminUser[]> {
@@ -41,6 +83,21 @@ export const adminService = {
       const data = wrapped?.data ?? wrapped;
       return data as AdminUser;
     } catch (error) {
+      throw new Error(getErrorMessage(error));
+    }
+  },
+
+  async getUserInsights(id: string): Promise<UserInsights> {
+    try {
+      const response = await apiClient.get<any>(`/admin/users/${id}/insights`);
+      const wrapped = response.data as any;
+      const data = wrapped?.data ?? wrapped;
+      return data as UserInsights;
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response?.status === 404) {
+        return emptyUserInsights;
+      }
       throw new Error(getErrorMessage(error));
     }
   },

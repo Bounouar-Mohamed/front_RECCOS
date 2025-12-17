@@ -159,7 +159,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     // ÉTAPE 2: Mettre à jour le localStorage et le store (APRÈS le cookie)
     // ═══════════════════════════════════════════════════════════════════════════
     if (typeof window !== 'undefined') {
-      localStorage.setItem('access_token', session.access_token);
+        localStorage.setItem('access_token', session.access_token);
       if (session.refresh_token) {
         localStorage.setItem('refresh_token', session.refresh_token);
       }
@@ -199,56 +199,56 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   checkAuth: async () => {
     console.log('[authStore] checkAuth started');
     
-    try {
-      const response = await fetch('/api/auth/me', {
-        method: 'GET',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        
-        if (data.authenticated && data.user) {
-          setCachedUser(data.user);
-          set({
-            user: data.user,
-            isAuthenticated: true,
-            isLoading: false,
-          });
+      try {
+        const response = await fetch('/api/auth/me', {
+          method: 'GET',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          
+          if (data.authenticated && data.user) {
+            setCachedUser(data.user);
+            set({
+              user: data.user,
+              isAuthenticated: true,
+              isLoading: false,
+            });
           console.log('[authStore] checkAuth: authenticated');
-          return;
+            return;
+          }
         }
-      }
-      
+
       // Non authentifié
       console.log('[authStore] checkAuth: not authenticated');
       clearAllAuthData();
-      set({
-        user: null,
-        isAuthenticated: false,
-        isLoading: false,
-      });
-      
-    } catch (error) {
-      console.error('[authStore] checkAuth error:', error);
-      
-      // En cas d'erreur réseau, utiliser le cache
-      const cachedUser = getCachedUser();
-      if (cachedUser) {
-        set({
-          user: cachedUser,
-          isAuthenticated: true,
-          isLoading: false,
-        });
-      } else {
         set({
           user: null,
           isAuthenticated: false,
           isLoading: false,
         });
+
+      } catch (error) {
+        console.error('[authStore] checkAuth error:', error);
+        
+      // En cas d'erreur réseau, utiliser le cache
+        const cachedUser = getCachedUser();
+        if (cachedUser) {
+          set({
+            user: cachedUser,
+            isAuthenticated: true,
+            isLoading: false,
+          });
+        } else {
+          set({
+            user: null,
+            isAuthenticated: false,
+            isLoading: false,
+          });
+        }
       }
-    }
   },
 
   refreshUserProfile: async () => {

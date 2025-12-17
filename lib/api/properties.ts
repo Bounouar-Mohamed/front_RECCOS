@@ -68,10 +68,40 @@ export interface PaginatedPropertyResponse {
   limit: number;
 }
 
+export interface StatHighlightProperty {
+  id: string;
+  title: string;
+  emirate: string;
+  propertyType: string;
+  pricePerShare: number;
+  totalShares: number;
+  soldShares: number;
+  expectedROI?: number | null;
+  rentalYield?: number | null;
+  status: PropertyStatus;
+}
+
 export interface PropertyStats {
   total: number;
   byStatus: Record<string, number>;
   byEmirate: Record<string, number>;
+  byType: Record<string, number>;
+  aggregates: {
+    totalValue: number;
+    investedValue: number;
+    availableValue: number;
+    averageExpectedRoi: number;
+    averageRentalYield: number;
+    projectedMonthlyIncome: number;
+    publishedCount: number;
+    pendingCount: number;
+    soldCount: number;
+  };
+  performance: {
+    topRoi: StatHighlightProperty[];
+    topRentalYield: StatHighlightProperty[];
+    topOccupancy: StatHighlightProperty[];
+  };
 }
 
 export interface PropertyListParams {

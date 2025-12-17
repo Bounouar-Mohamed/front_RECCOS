@@ -376,14 +376,72 @@
     },
     "actions": {
       "newProperty": "Nouveau bien",
-      "openUsers": "Gestion des comptes"
+      "openUsers": "Répertoire utilisateurs"
+    },
+    "heroHighlights": {
+      "assets": "Actifs visibles",
+      "aum": "AUM suivi",
+      "investors": "Investisseurs",
+      "volume": "Volume inventaire"
     },
     "stats": {
       "total": "Biens actifs",
       "published": "Publiés",
       "pending": "En attente",
       "investors": "Investisseurs (vue)",
-      "volume": "Volume suivi"
+      "volume": "Volume suivi",
+      "aum": "Encours sous gestion",
+      "aumHelper": "Valeur brute des actifs listés",
+      "capital": "Capital investi",
+      "capitalHelper": "Parts déjà vendues",
+      "available": "Capacité disponible",
+      "availableHelper": "Parts restantes à distribuer",
+      "monthlyIncome": "Revenu mensuel projeté",
+      "monthlyIncomeHelper": "Basé sur les parts vendues et le rendement",
+      "avgRoi": "ROI moyen",
+      "avgRoiHelper": "Pondéré sur les actifs suivis",
+      "avgYield": "Rendement locatif moyen",
+      "avgYieldHelper": "Performance locative agrégée"
+    },
+    "distributions": {
+      "title": "Répartition du portefeuille",
+      "subtitle": "Vue macro de l’entonnoir actuel.",
+      "status": "Par statut",
+      "type": "Par type",
+      "emirate": "Par émirat",
+      "empty": "Pas encore de données."
+    },
+    "performance": {
+      "title": "Classement des performances",
+      "subtitle": "Les actifs qui surperforment actuellement.",
+      "roi": "Meilleur ROI",
+      "yield": "Meilleur rendement locatif",
+      "liquidity": "Ventes les plus rapides",
+      "badge": {
+        "roi": "ROI",
+        "yield": "Yield",
+        "occupancy": "Ventes"
+      },
+      "empty": "Aucun actif ne se démarque pour l’instant.",
+      "notAvailable": "N.D."
+    },
+    "navigation": {
+      "portfolio": "Vue portefeuille",
+      "portfolioDesc": "KPIs, répartitions et highlights performance.",
+      "inventory": "Inventaire des biens",
+      "inventoryDesc": "Filtrer, auditer et enrichir chaque fiche.",
+      "brands": "Constructeurs & marques",
+      "brandsDesc": "Entretenir le catalogue des développeurs.",
+      "users": "Utilisateurs & accès",
+      "usersDesc": "Suivre tous les comptes (clients, équipes) et ajuster leurs droits.",
+      "selectPrompt": "Sélectionnez un module pour afficher ses détails.",
+      "locked": "Ce module est réservé aux super admins.",
+      "meta": {
+        "aum": "AUM",
+        "inventory": "Actifs",
+        "brands": "Marques",
+        "users": "Utilisateurs"
+      }
     },
     "filters": {
       "searchPlaceholder": "Rechercher un bien...",
@@ -424,6 +482,95 @@
       "feedback": {
         "created": "Marque ajoutée avec succès.",
         "updated": "Marque mise à jour."
+      }
+    },
+    "usersPanel": {
+      "loading": "Chargement des comptes...",
+      "empty": "Aucun compte ne correspond à vos filtres.",
+      "refresh": "Actualiser",
+      "refreshing": "Actualisation...",
+      "readOnly": "Réservé aux super admins.",
+      "status": {
+        "active": "Actif",
+        "inactive": "Suspendu"
+      },
+      "actions": {
+        "activate": "Activer",
+        "deactivate": "Suspendre"
+      },
+      "filters": {
+        "searchPlaceholder": "Rechercher par nom, email ou pseudo...",
+        "roleLabel": "Filtrer par rôle",
+        "statusLabel": "Filtrer par statut",
+        "role": {
+          "all": "Tous les rôles"
+        },
+        "status": {
+          "all": "Tous les statuts",
+          "active": "Actifs",
+          "inactive": "Suspendus"
+        }
+      },
+      "roleLabels": {
+        "client": "Client",
+        "agent": "Agent",
+        "admin": "Admin",
+        "superadmin": "Super admin"
+      },
+      "stats": {
+        "total": "Comptes",
+        "active": "Actifs",
+        "clients": "Clients",
+        "admins": "Admins"
+      },
+      "table": {
+        "title": "Utilisateurs",
+        "count": "{count} comptes",
+        "columns": {
+          "user": "Utilisateur",
+          "role": "Rôle",
+          "status": "Statut",
+          "created": "Créé",
+          "actions": "Actions"
+        },
+        "never": "—"
+      },
+      "details": {
+        "close": "Fermer la fiche",
+        "stats": {
+          "totalInvestments": "Investissements",
+          "investedAmount": "Montant investi",
+          "propertiesCount": "Biens",
+          "averageTicket": "Ticket moyen",
+          "sessionsCount": "Sessions",
+          "lastLogin": "Dernière connexion",
+          "never": "Jamais"
+        },
+        "investments": {
+          "title": "Investissements récents",
+          "subtitle": "Derniers tickets associés à ce compte.",
+          "columns": {
+            "property": "Bien",
+            "amount": "Montant",
+            "date": "Date",
+            "status": "Statut"
+          },
+          "shares": "{count} parts",
+          "empty": "Aucun investissement enregistré."
+        },
+        "activity": {
+          "title": "Activité récente",
+          "subtitle": "Journal des actions back-office.",
+          "empty": "Aucune activité pour le moment."
+        },
+        "error": "Impossible de charger les détails de cet utilisateur.",
+        "placeholder": "Ces insights avancés apparaîtront dès que l’API sera disponible.",
+        "disabled": "Les insights utilisateurs sont désactivés sur cet environnement."
+      },
+      "errors": {
+        "fetch": "Impossible de charger les comptes.",
+        "updateRole": "Impossible de mettre à jour le rôle.",
+        "updateStatus": "Impossible de mettre à jour le statut."
       }
     },
     "table": {
@@ -520,7 +667,8 @@
     },
     "errors": {
       "fetch": "Impossible de charger les biens.",
-      "action": "Action impossible sur ce bien."
+      "action": "Action impossible sur ce bien.",
+      "rateLimit": "Limite de requêtes atteinte. Veuillez patienter avant de réessayer."
     },
     "loading": "Chargement des biens...",
     "empty": "Aucun bien ne correspond à vos filtres.",
