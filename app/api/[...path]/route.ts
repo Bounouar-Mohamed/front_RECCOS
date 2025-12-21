@@ -16,8 +16,10 @@ import { NextRequest, NextResponse } from 'next/server';
 // URL du backend - utiliser la variable d'environnement ou localhost:3000 par défaut
 const BACKEND_URL = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3000';
 
-// Log de la configuration au chargement
-console.log('[API Proxy] Initialized with BACKEND_URL:', BACKEND_URL);
+// Logger conditionnel - pas de logs sensibles en production
+const isDev = process.env.NODE_ENV !== 'production';
+const log = (...args: unknown[]) => isDev && console.log('[API Proxy]', ...args);
+const logError = (...args: unknown[]) => console.error('[API Proxy]', ...args);
 
 export async function GET(
   request: NextRequest,
@@ -79,14 +81,7 @@ async function handleRequest(
     const searchParams = request.nextUrl.searchParams.toString();
     const fullUrl = searchParams ? `${backendUrl}?${searchParams}` : backendUrl;
     
-    console.log(`[API Proxy] ${method} ${fullUrl}`, {
-      BACKEND_URL,
-      apiPath,
-      fullUrl,
-      referer: request.headers.get('referer') || 'unknown',
-      userAgent: request.headers.get('user-agent') || 'unknown',
-      origin: request.headers.get('origin') || 'unknown',
-    });
+    log(method, apiPath);
     
     // Préparer les headers
     const headers = new Headers();
@@ -110,16 +105,6 @@ async function handleRequest(
     }
     
     // Faire la requête vers le backend
-    const headersArray: string[] = [];
-    headers.forEach((_, key) => headersArray.push(key));
-    console.log(`[API Proxy] Fetching from backend...`, {
-      url: fullUrl,
-      method,
-      hasBody: !!body,
-      bodyLength: body ? (typeof body === 'string' ? body.length : 'unknown') : 0,
-      headersCount: headersArray.length,
-      headers: headersArray,
-    });
     
     let response: Response;
     try {
@@ -128,23 +113,9 @@ async function handleRequest(
         headers,
         body,
       });
-      console.log(`[API Proxy] Backend responded with status: ${response.status}`, {
-        statusText: response.statusText,
-        ok: response.ok,
-        headers: Object.fromEntries(response.headers.entries()),
-      });
+      log('Response:', response.status);
     } catch (fetchError: any) {
-      console.error(`[API Proxy] Fetch error:`, {
-        error: fetchError,
-        message: fetchError?.message,
-        code: fetchError?.code,
-        errno: fetchError?.errno,
-        syscall: fetchError?.syscall,
-        address: fetchError?.address,
-        port: fetchError?.port,
-        fullUrl,
-        BACKEND_URL,
-      });
+      logError('Fetch error:', fetchError?.message);
       throw fetchError;
     }
     
@@ -153,20 +124,6 @@ async function handleRequest(
     let jsonData: any;
     try {
       jsonData = JSON.parse(data);
-      // Debug pour verify-otp
-      if (apiPath === 'auth/verify-otp' && response.status === 200) {
-        console.log('[API Proxy] verify-otp response structure:', {
-          topLevelKeys: Object.keys(jsonData || {}),
-          hasData: !!jsonData?.data,
-          dataKeys: jsonData?.data ? Object.keys(jsonData.data) : [],
-          hasAccessTokenTop: !!jsonData?.access_token,
-          hasAccessTokenInData: !!jsonData?.data?.access_token,
-          hasUserTop: !!jsonData?.user,
-          hasUserInData: !!jsonData?.data?.user,
-          userHasId: !!jsonData?.data?.user?.id,
-          fullStructure: jsonData,
-        });
-      }
     } catch {
       // Si ce n'est pas du JSON, retourner le texte brut
       jsonData = data;
@@ -198,11 +155,9 @@ async function handleRequest(
           path: '/', // Accessible sur tout le site
         });
         
-        console.log('[API Proxy] httpOnly cookie défini pour verify-otp');
+        log('httpOnly cookie set for verify-otp');
       }
     }
-    
-    console.log(`[API Proxy] Response prepared, status: ${response.status}`);
     
     // Copier les headers de la réponse du backend
     response.headers.forEach((value, key) => {
@@ -218,12 +173,7 @@ async function handleRequest(
     
     return nextResponse;
   } catch (error) {
-    console.error('[API Proxy] Error details:', {
-      message: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
-      backendUrl: BACKEND_URL,
-      method,
-    });
+    logError('Error:', error instanceof Error ? error.message : 'Unknown error');
     
     // Vérifier si c'est une erreur de connexion
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';

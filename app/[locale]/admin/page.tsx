@@ -1536,7 +1536,9 @@ export default function AdminDashboardPage() {
           <button
             type="button"
             className={adminDashboardStyles.userRefreshButton}
-            onClick={fetchAdminUsers}
+            onClick={() => {
+              fetchAdminUsers({ force: true });
+            }}
             disabled={isAdminUsersLoading}
           >
             {isAdminUsersLoading ? t('usersPanel.refreshing') : t('usersPanel.refresh')}
@@ -2063,6 +2065,21 @@ export default function AdminDashboardPage() {
         )}
       </AnimatePresence>
       <AnimatePresence>{selectedUser && userDetailPanel}</AnimatePresence>
+      <AnimatePresence>
+        {selectedProperty && (
+          <PropertyDetailModal
+            property={selectedProperty}
+            onClose={() => setSelectedProperty(null)}
+            onEdit={handleOpenEdit}
+            onWorkflow={handleWorkflow}
+            currencyFormatter={currencyFormatter}
+            numberFormatter={numberFormatter}
+            dateLocale={dateLocale}
+            locale={locale}
+            t={t}
+          />
+        )}
+      </AnimatePresence>
     </main>
   );
 }
@@ -2100,6 +2117,180 @@ function FormControl({ label, value, onChange, textarea, colSpan, placeholder }:
         />
       )}
     </label>
+  );
+}
+
+interface PropertyDetailModalProps {
+  property: AdminProperty;
+  onClose: () => void;
+  onEdit: (property: AdminProperty) => void;
+  onWorkflow: (action: 'publish' | 'reject' | 'delete', property: AdminProperty) => void;
+  currencyFormatter: Intl.NumberFormat;
+  numberFormatter: Intl.NumberFormat;
+  dateLocale: Locale;
+  locale: string;
+  t: ReturnType<typeof useTranslations>;
+}
+
+function PropertyDetailModal({
+  property,
+  onClose,
+  onEdit,
+  onWorkflow,
+  currencyFormatter,
+  numberFormatter,
+  dateLocale,
+  locale,
+  t,
+}: PropertyDetailModalProps) {
+  const progress = Math.min(100, Math.round((property.soldShares / property.totalShares) * 100));
+  const totalValue = property.pricePerShare * property.totalShares;
+
+  return (
+    <>
+      <motion.div
+        className={adminDashboardStyles.detailPanelOverlay}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        onClick={onClose}
+      />
+      <motion.section
+        className={adminDashboardStyles.detailPanel}
+        initial={{ y: '100%' }}
+        animate={{ y: 0 }}
+        exit={{ y: '100%' }}
+        transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+      >
+        <div className={adminDashboardStyles.detailHeader}>
+          <div>
+            <h2 className={adminDashboardStyles.detailTitle}>{property.title}</h2>
+            <p className={adminDashboardStyles.subtitle}>
+              {property.address || t('detail.location', { zone: property.zone, emirate: t(`emirates.${property.emirate}`) })}
+            </p>
+          </div>
+          <button
+            type="button"
+            className={adminDashboardStyles.closeButton}
+            onClick={onClose}
+            aria-label={t('usersPanel.details.close')}
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className={adminDashboardStyles.detailGrid}>
+          <div className={adminDashboardStyles.detailCard}>
+            <span className={adminDashboardStyles.detailLabel}>{t('detail.pricePerShare')}</span>
+            <span className={adminDashboardStyles.detailValue}>
+              {currencyFormatter.format(property.pricePerShare)}
+            </span>
+          </div>
+          <div className={adminDashboardStyles.detailCard}>
+            <span className={adminDashboardStyles.detailLabel}>{t('detail.totalShares')}</span>
+            <span className={adminDashboardStyles.detailValue}>
+              {numberFormatter.format(property.totalShares)}
+            </span>
+          </div>
+          <div className={adminDashboardStyles.detailCard}>
+            <span className={adminDashboardStyles.detailLabel}>{t('detail.totalValue')}</span>
+            <span className={adminDashboardStyles.detailValue}>
+              {currencyFormatter.format(totalValue)}
+            </span>
+          </div>
+        </div>
+
+        <div className={adminDashboardStyles.detailSection}>
+          <span className={adminDashboardStyles.detailSectionTitle}>{t('table.columns.progress')}</span>
+          <div className={adminDashboardStyles.progressWrapper}>
+            <span>
+              {property.soldShares} / {property.totalShares} ({progress}%)
+            </span>
+            <span className={adminDashboardStyles.progressTrack}>
+              <span
+                className={adminDashboardStyles.progressFill}
+                style={{ width: `${progress}%` }}
+              />
+            </span>
+          </div>
+        </div>
+
+        <div className={adminDashboardStyles.detailSection}>
+          <span className={adminDashboardStyles.detailSectionTitle}>{t('detail.investorsTitle')}</span>
+          {property.investors.length > 0 ? (
+            <div className={adminDashboardStyles.investorsPanel}>
+              <div className={adminDashboardStyles.investorList}>
+                {property.investors.slice(0, 5).map((investor, index) => (
+                  <div key={index} className={adminDashboardStyles.investorChip}>
+                    <div className={adminDashboardStyles.investorInfo}>
+                      <span className={adminDashboardStyles.investorName}>{investor.name}</span>
+                      {investor.email && (
+                        <span className={adminDashboardStyles.investorMeta}>{investor.email}</span>
+                      )}
+                    </div>
+                    <div className={adminDashboardStyles.investorMeta}>
+                      {investor.shares && (
+                        <span>{t('detail.shares', { count: investor.shares })}</span>
+                      )}
+                      {investor.amount && (
+                        <span>{currencyFormatter.format(investor.amount)}</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {property.investors.length > 5 && (
+                <p className={adminDashboardStyles.subtitle}>
+                  +{property.investors.length - 5} {t('table.investorsCount', { count: property.investors.length - 5 })}
+                </p>
+              )}
+            </div>
+          ) : (
+            <p className={adminDashboardStyles.subtitle}>{t('detail.noInvestors')}</p>
+          )}
+        </div>
+
+        <div className={adminDashboardStyles.primaryActionsSection}>
+          <div className={adminDashboardStyles.primaryActions}>
+            {property.status !== 'published' && (
+              <button
+                type="button"
+                className={adminDashboardStyles.publishButton}
+                onClick={() => onWorkflow('publish', property)}
+              >
+                {t('detail.actions.publish')}
+              </button>
+            )}
+            {property.status !== 'rejected' && property.status !== 'published' && (
+              <button
+                type="button"
+                className={adminDashboardStyles.rejectButton}
+                onClick={() => onWorkflow('reject', property)}
+              >
+                {t('detail.actions.reject')}
+              </button>
+            )}
+          </div>
+          <div className={adminDashboardStyles.secondaryActions}>
+            <button
+              type="button"
+              className={adminDashboardStyles.ghostButton}
+              onClick={() => onEdit(property)}
+            >
+              {t('detail.actions.edit')}
+            </button>
+            <button
+              type="button"
+              className={adminDashboardStyles.deleteButton}
+              onClick={() => onWorkflow('delete', property)}
+            >
+              {t('detail.actions.delete')}
+            </button>
+          </div>
+        </div>
+      </motion.section>
+    </>
   );
 }
 

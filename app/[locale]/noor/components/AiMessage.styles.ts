@@ -92,6 +92,15 @@ export const aiMessageStyles = {
     gap: '12px',
     alignItems: 'flex-start',
   }),
+  propertiesWrapper: css({
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '24px',
+  }),
+  propertiesEmpty: css({
+    fontSize: '0.85rem',
+    color: 'rgba(255, 255, 255, 0.6)',
+  }),
   propertyCard: css({
     position: 'relative',
     display: 'flex',
@@ -194,6 +203,12 @@ export const aiMessageStyles = {
     justifyContent: 'space-between',
     gap: '8px',
   }),
+  propertyPitch: css({
+    fontSize: '0.7rem',
+    color: 'rgba(255, 255, 255, 0.75)',
+    marginBottom: '6px',
+    lineHeight: 1.4,
+  }),
   propertyZone: css({
     fontSize: '0.7rem',
     color: 'rgba(255, 255, 255, 0.6)',
@@ -207,6 +222,13 @@ export const aiMessageStyles = {
     fontWeight: 600,
     color: '#FFFFFF',
     whiteSpace: 'nowrap',
+  }),
+  propertyDetailsRow: css({
+    display: 'flex',
+    gap: '8px',
+    fontSize: '0.7rem',
+    color: 'rgba(255, 255, 255, 0.75)',
+    marginTop: '4px',
   }),
   propertyTypeBadge: css({
     position: 'absolute',
@@ -266,6 +288,12 @@ export const aiMessageStyles = {
     color: '#ffffff',
     letterSpacing: '0.03em',
   }),
+  upcomingHint: css({
+    marginTop: '6px',
+    fontSize: '0.7rem',
+    color: 'rgba(255, 255, 255, 0.7)',
+    textAlign: 'center',
+  }),
   sourcesSection: css({
     display: 'flex',
     flexDirection: 'column',
@@ -294,6 +322,30 @@ export const aiMessageStyles = {
       color: '#a5b4fc',
       textDecoration: 'underline',
     },
+  }),
+  
+  // Introduction engageante avant les cartes
+  introText: css({
+    fontSize: { base: '1rem', md: '1.05rem' },
+    fontWeight: 500,
+    color: 'rgba(255, 255, 255, 0.95)',
+    lineHeight: 1.6,
+    marginBottom: '4px',
+    '& strong': {
+      color: '#a5b4fc',
+      fontWeight: 600,
+    },
+  }),
+  
+  // Outro / Call-to-action après les cartes
+  outroText: css({
+    fontSize: { base: '0.95rem', md: '1rem' },
+    fontWeight: 400,
+    color: 'rgba(255, 255, 255, 0.85)',
+    lineHeight: 1.6,
+    marginTop: '8px',
+    paddingTop: '12px',
+    borderTop: '1px solid rgba(255, 255, 255, 0.08)',
   }),
 };
 

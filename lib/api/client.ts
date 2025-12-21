@@ -2,6 +2,16 @@ import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'ax
 import { persistSession, getStoredRefreshToken } from '../auth/sessionStorage';
 import { emitForceLogout } from '../auth/forceLogoutEvent';
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// SÉCURITÉ: Logger conditionnel - Pas de logs sensibles en production
+// ═══════════════════════════════════════════════════════════════════════════════
+const isDev = process.env.NODE_ENV !== 'production';
+const secureLog = {
+  log: (...args: unknown[]) => isDev && console.log('[apiClient]', ...args),
+  warn: (...args: unknown[]) => isDev && console.warn('[apiClient]', ...args),
+  error: (...args: unknown[]) => console.error('[apiClient]', ...args), // Toujours logger les erreurs
+};
+
 /**
  * Configuration de l'URL de l'API
  * 
@@ -25,15 +35,14 @@ const API_URL = (() => {
 
   // Toujours privilégier la variable d'environnement si elle est définie
   if (envUrl) {
-    console.log('[apiClient] Using API URL from env:', envUrl);
+    secureLog.log('Using API URL from env:', envUrl);
     return envUrl;
   }
 
   if (!isProduction) {
     // En développement, utiliser le proxy Next.js
     const relativeUrl = '/api';
-    console.log('[apiClient] Development mode - Using relative API URL (via Next.js proxy):', relativeUrl);
-    console.log('[apiClient] Backend will be proxied through Next.js to:', process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3000');
+    secureLog.log('Development mode - Using relative API URL (via Next.js proxy):', relativeUrl);
     return relativeUrl;
   }
 
@@ -42,14 +51,12 @@ const API_URL = (() => {
     const hostname = window.location.hostname;
     if (hostname === 'reccos.ae' || hostname === 'www.reccos.ae') {
       const apiUrl = 'https://api.reccos.ae/api';
-      console.log('[apiClient] Production mode - Using dedicated API subdomain:', apiUrl);
-      console.log('[apiClient] Tip: définissez NEXT_PUBLIC_API_URL dans .env.production pour surcharger cette valeur si besoin.');
       return apiUrl;
     }
   }
 
   // Fallback: utiliser le proxy même en production
-  console.warn('[apiClient] NEXT_PUBLIC_API_URL non défini. Retombée sur le proxy /api.');
+  secureLog.warn('NEXT_PUBLIC_API_URL non défini. Retombée sur le proxy /api.');
   return '/api';
 })();
 
@@ -123,7 +130,7 @@ const requestNewAccessToken = async (): Promise<string | null> => {
   return normalized.access_token;
 };
 
-console.log('[apiClient] Axios instance created with baseURL:', API_URL);
+secureLog.log('Axios instance created with baseURL:', API_URL);
 
 /**
  * Intercepteur pour ajouter automatiquement le token JWT aux requêtes
@@ -162,29 +169,39 @@ apiClient.interceptors.request.use(
     const requiresAuth = config.requiresAuth ?? true;
     config.requiresAuth = requiresAuth;
     const fullUrl = `${config.baseURL}${config.url}`;
-    console.log('[apiClient] Request interceptor:', {
-      method: config.method?.toUpperCase(),
-      url: config.url,
-      baseURL: config.baseURL,
-      fullUrl,
-      hasToken: typeof window !== 'undefined' ? !!localStorage.getItem('access_token') : false,
-      isClient: typeof window !== 'undefined',
-      currentUrl: typeof window !== 'undefined' ? window.location.href : 'server-side'
-    });
     
-    // Récupérer le token depuis le storage (côté client uniquement)
-    // Le token a été stocké par authService.login() après une connexion réussie
-    if (typeof window !== 'undefined' && requiresAuth) {
-      const token = localStorage.getItem('access_token');
-      if (token && config.headers) {
-        // Ajouter le token au header Authorization pour authentifier la requête
-        config.headers.Authorization = `Bearer ${token}`;
+    // ══════════════════════════════════════════════════════════════════════════════
+    // SÉCURITÉ: Authentification via cookie httpOnly + fallback legacy
+    // ══════════════════════════════════════════════════════════════════════════════
+    // 
+    // Nouvelle architecture:
+    // - Le access_token est dans un cookie httpOnly (envoyé automatiquement)
+    // - withCredentials: true permet l'envoi automatique du cookie
+    // 
+    // Migration:
+    // - Les tokens legacy en localStorage sont encore supportés
+    // - Ils seront migrés vers les cookies à la prochaine connexion
+    // 
+    const legacyToken = typeof window !== 'undefined' 
+      ? localStorage.getItem('access_token') 
+      : null;
+    
+    secureLog.log('Request:', config.method?.toUpperCase(), config.url);
+    
+    // Ajouter le token legacy au header Authorization si présent
+    // Note: Les nouvelles sessions utilisent le cookie httpOnly (pas besoin de header)
+    if (typeof window !== 'undefined' && requiresAuth && legacyToken) {
+      if (config.headers) {
+        config.headers.Authorization = `Bearer ${legacyToken}`;
       }
+      // Token legacy détecté - sera migré à la prochaine connexion
+      secureLog.warn('Legacy token detected - will migrate on next login');
     }
+    
     return config;
   },
   (error) => {
-    console.error('[apiClient] Request interceptor error:', error);
+    secureLog.error('Request interceptor error:', error?.message);
     return Promise.reject(error);
   }
 );
@@ -192,45 +209,15 @@ apiClient.interceptors.request.use(
 // Intercepteur pour gérer les erreurs
 apiClient.interceptors.response.use(
   (response) => {
-    console.log('[apiClient] Response interceptor - success:', {
-      status: response.status,
-      url: response.config.url,
-      hasData: !!response.data
-    });
-    // Vérifier que la réponse est valide
-    if (!response || !response.data) {
-      console.warn('[apiClient] Invalid response structure:', response);
-    }
+    secureLog.log('Response:', response.status, response.config.url);
     return response;
   },
   async (error: AxiosError) => {
-    console.error('[apiClient] Response interceptor - error:', {
-      hasResponse: !!error.response,
-      status: error.response?.status,
-      url: error.config?.url,
-      message: error.message,
-      code: error.code
-    });
+    secureLog.error('Response error:', error.response?.status, error.config?.url, error.message);
     
     // Erreur réseau (pas de réponse du serveur)
     if (!error.response) {
-      console.error('[apiClient] Network error (no response):', {
-        code: error.code,
-        message: error.message,
-        config: {
-          url: error.config?.url,
-          baseURL: error.config?.baseURL,
-          method: error.config?.method,
-          timeout: error.config?.timeout,
-          fullUrl: error.config ? `${error.config.baseURL}${error.config.url}` : 'unknown',
-        },
-        request: {
-          path: error.request?.path,
-          host: error.request?.host,
-          protocol: error.request?.protocol,
-        },
-        stack: error.stack,
-      });
+      secureLog.error('Network error - no response from server');
       const networkError = new Error(
         error.code === 'ECONNABORTED'
           ? 'La requête a pris trop de temps. Vérifiez votre connexion.'
@@ -247,15 +234,11 @@ apiClient.interceptors.response.use(
     const requiresAuth = originalRequest?.requiresAuth ?? true;
     const skipAuthRedirect = originalRequest?.skipAuthRedirect ?? false;
     
-    console.log('[apiClient] Error details:', {
-      status,
-      errorData,
-      message: errorData?.message
-    });
+    secureLog.log('Error status:', status);
 
     // 401 Unauthorized - Token expiré ou invalide (mais pas pour les erreurs de login)
     if (status === 401) {
-      console.log('[apiClient] 401 Unauthorized error');
+      secureLog.log('401 Unauthorized');
       const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
       const isLoginPage = currentPath.includes('/login');
       const requestUrl = originalRequest?.url || '';
@@ -275,13 +258,13 @@ apiClient.interceptors.response.use(
         originalRequest
       ) {
         if (originalRequest._retry) {
-          console.warn('[apiClient] Retry already attempted for this request');
+          secureLog.warn('Retry already attempted');
         } else {
           originalRequest._retry = true;
 
           try {
             if (isRefreshing) {
-              console.log('[apiClient] Refresh already in progress, queueing request');
+              secureLog.log('Refresh in progress, queueing');
               return new Promise((resolve, reject) => {
                 enqueueRefreshCallback((token) => {
                   if (!token) {
@@ -303,13 +286,13 @@ apiClient.interceptors.response.use(
               notifyRefreshQueue(newToken);
               originalRequest.headers = originalRequest.headers ?? {};
               originalRequest.headers.Authorization = `Bearer ${newToken}`;
-              console.log('[apiClient] Access token refreshed, retrying original request');
+              secureLog.log('Token refreshed, retrying request');
               return apiClient(originalRequest);
             }
 
             notifyRefreshQueue(null);
           } catch (refreshError: any) {
-            console.error('[apiClient] Refresh token flow failed:', refreshError);
+            secureLog.error('Refresh token failed');
             notifyRefreshQueue(null);
             isRefreshing = false;
             // Seulement effacer si c'est une vraie erreur 401, pas une erreur réseau
@@ -328,7 +311,7 @@ apiClient.interceptors.response.use(
         }
       }
 
-      console.log('[apiClient] Current path:', currentPath, 'isLoginPage:', isLoginPage);
+      secureLog.log('Path:', currentPath, 'isLogin:', isLoginPage);
       
       // Seulement rediriger si c'est une vraie erreur 401 avec réponse serveur
       // (pas une erreur réseau transitoire lors du hot reload)

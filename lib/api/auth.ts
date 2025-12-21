@@ -53,6 +53,16 @@ import type { User } from '../types/user';
 export type { User };
 import { clearSession, getStoredUser } from '../auth/sessionStorage';
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// SÉCURITÉ: Logger conditionnel - Pas de logs sensibles en production
+// ═══════════════════════════════════════════════════════════════════════════════
+const isDev = process.env.NODE_ENV !== 'production';
+const secureLog = {
+  log: (...args: unknown[]) => isDev && console.log('[authService]', ...args),
+  warn: (...args: unknown[]) => isDev && console.warn('[authService]', ...args),
+  error: (...args: unknown[]) => console.error('[authService]', ...args),
+};
+
 // Types
 export interface RegisterData {
   email: string;
@@ -295,31 +305,16 @@ export const authService = {
    * @throws Error avec message descriptif en cas d'échec
    */
   async login(data: LoginData): Promise<LoginResponse> {
-    console.log('[authService] login called with:', { 
-      email: data.email, 
-      hasPassword: !!data.password,
-      has2FACode: !!data.twoFactorCode 
-    });
+    secureLog.log('login called for:', data.email);
     
     try {
-      console.log('[authService] Making POST request to /auth/login...');
       const response = await apiClient.post<LoginResponse>('/auth/login', data);
       const normalized = normalizeAuthResponse(response.data);
-      console.log('[authService] Login successful, normalized response ready');
+      secureLog.log('Login successful');
       return normalized;
     } catch (error) {
-      console.error('[authService] Login error:', error);
-      console.error('[authService] Error type:', typeof error);
-      console.error('[authService] Error is AxiosError:', (error as any)?.isAxiosError);
-      console.error('[authService] Error response:', (error as any)?.response);
-      console.error('[authService] Error response data:', (error as any)?.response?.data);
-      console.error('[authService] Error response status:', (error as any)?.response?.status);
-      
-      // Seulement effacer si c'est une vraie erreur 401, pas une erreur réseau
-      // (login n'a pas de session à effacer de toute façon, donc on peut l'ignorer)
-      
+      secureLog.error('Login failed:', (error as any)?.response?.status);
       const errorMessage = getErrorMessage(error);
-      console.log('[authService] Error message extracted:', errorMessage);
       throw new Error(errorMessage);
     }
   },
@@ -426,26 +421,11 @@ export const authService = {
   async verifyOTP(email: string, code: string): Promise<LoginResponse> {
     try {
       const response = await apiClient.post<LoginResponse>('/auth/verify-otp', { email, code });
-      
-      // Debug: vérifier la structure de la réponse
-      console.log('[authService.verifyOTP] Response structure:', {
-        hasResponse: !!response,
-        hasData: !!response?.data,
-        dataKeys: response?.data ? Object.keys(response.data as any) : [],
-        fullData: response?.data
-      });
-      
       const normalized = normalizeAuthResponse(response.data);
-      console.log('[authService.verifyOTP] Successfully extracted data:', {
-        hasToken: !!normalized.access_token,
-        hasUser: !!normalized.user,
-        userId: normalized.user?.id,
-      });
+      secureLog.log('OTP verified successfully');
       return normalized;
     } catch (error) {
-      console.error('[authService.verifyOTP] Error:', error);
-      // Ne pas effacer la session pour des erreurs réseau
-      // (verifyOTP n'a pas de session à effacer de toute façon)
+      secureLog.error('OTP verification failed');
       throw new Error(getErrorMessage(error));
     }
   },
@@ -486,7 +466,7 @@ export const authService = {
           credentials: 'include',
         });
       } catch (error) {
-        console.error('[authService.logout] Error clearing cookie:', error);
+        secureLog.error('Error clearing cookie');
       }
     }
   },
